@@ -1,7 +1,5 @@
 using Mirror;
-using Mirror.Examples.MultipleMatch;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameNetworkManager : NetworkManager
@@ -12,6 +10,16 @@ public class GameNetworkManager : NetworkManager
     private ServerNetworkManager _serverNetwork;
     [SerializeField]
     private ClientNetworkManager _clientNetwork;
+
+    public ClientNetworkManager Client => _clientNetwork;
+
+    public static new GameNetworkManager singleton { get; private set; }
+
+    public override void Awake()
+    {
+        base.Awake();
+        singleton = this;
+    }
 
     #region Server System Callbacks
 
