@@ -8,7 +8,7 @@ public class GameManager : NetworkBehaviour
     [SyncVar] public int VoteTime = 30;
     [SyncVar] public int MinWolf = 3;
     [SyncVar] public int MinFox = 3;
-    public SyncList<Role> Roles = new SyncList<Role>();
+    public readonly SyncList<Role> Roles = new SyncList<Role>();
     public List<PlayerController> Players = new List<PlayerController>();
 
     [SerializeField]

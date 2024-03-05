@@ -31,9 +31,21 @@ public class RoomManager : Singleton<RoomManager>
         return null;
     }
 
-    public void LeaveRoom(NetworkConnectionToClient conn, string id)
+    public void LeaveRoom(NetworkConnectionToClient conn)
     {
-
+        foreach (var room in Rooms)
+        {
+            if(room.Value.Players.ContainsKey(conn))
+            {
+                room.Value.RemovePlayer(conn);
+                if(room.Value.Players.Count <= 0)
+                {
+                    Rooms.Remove(room.Key);
+                    Debug.Log("Remove Room");
+                    return;
+                }
+            }
+        }
     }
 
     public List<LobbyRoomInfo> GetRoomListInfo()

@@ -12,12 +12,6 @@ public class ClientNetworkManager : MonoBehaviour
 
     public void OnClientDisconnect()
     {
-        NetworkClient.Send(new ServerRoomMessage()
-        {
-            Operation = ServerRoomOperation.REMOVE,
-        });
-        NetworkClient.UnregisterHandler<ClientRoomMessage>();
-        NetworkClient.UnregisterHandler<WaitingRoomMessage>();
     }
 
     public void OnStartClient()
@@ -28,7 +22,8 @@ public class ClientNetworkManager : MonoBehaviour
 
     public void OnStopClient()
     {
-
+        NetworkClient.UnregisterHandler<ClientRoomMessage>();
+        NetworkClient.UnregisterHandler<WaitingRoomMessage>();
     }
 
     [ClientCallback]

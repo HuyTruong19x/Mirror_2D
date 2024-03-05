@@ -10,6 +10,7 @@ public class ServerRoomHandler : MessageHandler<ServerRoomMessage>
             case ServerRoomOperation.CREATE: CreateRoom(conn, message); break;
             case ServerRoomOperation.JOIN: JoinRoom(conn, message); break;
             case ServerRoomOperation.LIST: GetRoomList(conn); break;
+            case ServerRoomOperation.REMOVE: LeaveRoom(conn); break;
         }
     }
 
@@ -56,9 +57,9 @@ public class ServerRoomHandler : MessageHandler<ServerRoomMessage>
         }
     }
 
-    private void LeaveRoom(NetworkConnectionToClient conn, string roomID)
+    private void LeaveRoom(NetworkConnectionToClient conn)
     {
-        RoomManager.Instance.LeaveRoom(conn, roomID);
+        RoomManager.Instance.LeaveRoom(conn);
     }
 
     private void GetRoomList(NetworkConnectionToClient conn)

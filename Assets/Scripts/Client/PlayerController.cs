@@ -5,6 +5,12 @@ public class PlayerController : NetworkBehaviour
 {
     private Rigidbody2D _rid2D;
 
+    [ServerCallback]
+    private void OnDestroy()
+    {
+        Disconnected(connectionToClient);
+    }
+
     private void Start()
     {
         _rid2D = GetComponent<Rigidbody2D>();
@@ -25,5 +31,11 @@ public class PlayerController : NetworkBehaviour
     public void StartGame(Vector3 position)
     {
         transform.position = position;
+    }
+
+    [ServerCallback]
+    public void Disconnected(NetworkConnectionToClient conn)
+    {
+        RoomManager.Instance.LeaveRoom(conn);
     }
 }

@@ -70,8 +70,8 @@ public class GameNetworkManager : NetworkManager
     /// </summary>
     public override void OnClientDisconnect()
     {
-        _clientNetwork.OnClientDisconnect();
         base.OnClientDisconnect();
+        _clientNetwork.OnClientDisconnect();
     }
 
     #endregion

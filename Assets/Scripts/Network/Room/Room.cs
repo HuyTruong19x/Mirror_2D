@@ -34,22 +34,10 @@ public class Room
         UpdateRoomStatus();
     }
 
-    public void RemovePlayer(NetworkIdentity user)
+    public void RemovePlayer(NetworkConnectionToClient user)
     {
-        //for (int i = 0; i < Players.Count; i++)
-        //{
-        //    if (Players[i].netId == user.netId)
-        //    {
-        //        foreach (var playerInRoom in Players)
-        //        {
-        //            //playerInRoom.RpcPlayerLeaveRoom(PlayerInfos[i]);
-        //        }
-
-        //        Players.RemoveAt(i);
-        //        PlayerInfos.RemoveAt(i);
-        //        return;
-        //    }
-        //}
+        Players.Remove(user);
+        UpdateRoomStatus();
     }
 
     public bool IsHost(NetworkConnectionToClient player)
