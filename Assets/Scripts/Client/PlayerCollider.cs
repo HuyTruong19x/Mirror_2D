@@ -3,12 +3,10 @@ using UnityEngine;
 
 public class PlayerCollider : NetworkBehaviour
 {
-    private UIPlayer _playerUI;
-    private GameController _controller;
+    private PlayerRole _playerRole;
     public override void OnStartLocalPlayer()
     {
-        _playerUI = GameObject.FindObjectOfType<UIPlayer>();
-        _controller = GameObject.FindObjectOfType<GameController>();
+        _playerRole = GetComponent<PlayerRole>();
     }
 
     [ServerCallback]
@@ -30,25 +28,13 @@ public class PlayerCollider : NetworkBehaviour
     [ClientRpc]
     private void ShowUI(PlayerRole playerRole)
     {
-        if(!isLocalPlayer || _controller.State != GameState.PLAYING)
-        {
-            return;
-        }    
-
-        Debug.Log("Show ui");
-        _playerUI.SetInteract(true);
-        _playerUI.SetTarget(playerRole);
+        _playerRole.Show(playerRole);
     }
 
     [ClientRpc]
     private void HideUI()
     {
-        if (!isLocalPlayer || _controller.State != GameState.PLAYING)
-        {
-            return;
-        }
-
         Debug.Log("hide ui");
-        _playerUI.SetInteract(false);
+        _playerRole.Hide();
     }
 }

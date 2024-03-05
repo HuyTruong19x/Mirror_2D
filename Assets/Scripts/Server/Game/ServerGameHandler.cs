@@ -29,8 +29,6 @@ public class ServerGameHandler : MessageHandler<GameMessage>
             NetworkServer.Spawn(_gameManagers[roomGuid].gameObject);
         }
 
-        _gameManagers[roomGuid].AddPlayer(conn);
-
         var room = RoomManager.Instance.GetRoom(message.RoomID);
 
         if(room == null)
@@ -51,12 +49,12 @@ public class ServerGameHandler : MessageHandler<GameMessage>
                 player.GetComponent<NetworkMatch>().matchId = roomGuid;
                 NetworkServer.AddPlayerForConnection(item.Key, player);
                 _games.Add(item.Key, player);
+                _gameManagers[roomGuid].AddPlayer(player.GetComponent<PlayerController>());
             }
         }
 
-        conn.Send(new GameMessage()
+        conn.Send(new WaitingRoomMessage()
         {
-            Operation = 1,
             State = GameState.WAITING,
             IsHost = room.IsHost(conn)
         });

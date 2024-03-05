@@ -187,7 +187,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &4960504626345349787
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -323,7 +323,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  Role: 0
+  _uiPlayer: {fileID: 989867667909634024, guid: e4a76859dbfe17f448d7e54fdf19df44, type: 3}
+  Role:
+    RoleID: 0
 --- !u!114 &-1784903956088051286
 MonoBehaviour:
   m_ObjectHideFlags: 0

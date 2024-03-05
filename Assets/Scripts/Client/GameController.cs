@@ -15,7 +15,7 @@ public class GameController : MonoBehaviour
 
     private void OnEnable()
     {
-        EventDispatcher.Subscribe(ActionChannel.GAME, OnReceiveMessage);
+        EventDispatcher.Subscribe(ActionChannel.WAITING_ROOM, OnWaitingMessage);
     }
 
     void Start()
@@ -29,19 +29,11 @@ public class GameController : MonoBehaviour
     }
 
 
-    private void OnReceiveMessage(NetworkMessage message)
+    private void OnWaitingMessage(NetworkMessage message)
     {
-        var gm = (GameMessage)message;
-        if(gm.Operation == 1)
-        {
-            _uiGame.SetHost(gm.IsHost);
-            _currentState = gm.State;
-        }
-        if(gm.Operation == 2)
-        {
-            _currentState = gm.State;
-            Debug.Log("Position = " + gm.Position);
-        }
+        var gm = (WaitingRoomMessage)message;
+        _uiGame.SetHost(gm.IsHost);
+        _currentState = gm.State;
         OnStateChange();
     }    
 

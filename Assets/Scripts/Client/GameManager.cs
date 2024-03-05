@@ -9,13 +9,13 @@ public class GameManager : NetworkBehaviour
     [SyncVar] public int MinWolf = 3;
     [SyncVar] public int MinFox = 3;
     public SyncList<Role> Roles = new SyncList<Role>();
-    public List<NetworkConnectionToClient> Players = new List<NetworkConnectionToClient>();
+    public List<PlayerController> Players = new List<PlayerController>();
 
     [SerializeField]
     private Map _map;
 
     [ServerCallback]
-    public void AddPlayer(NetworkConnectionToClient player)
+    public void AddPlayer(PlayerController player)
     {
         Players.Add(player);
     }
@@ -26,13 +26,12 @@ public class GameManager : NetworkBehaviour
         SetupRole();
         foreach(var player in Players)
         {
-            player.Send(new GameMessage()
+            player.StartGame(_map.GetStartPosition());
+            var role = player.GetComponent<PlayerRole>();
+            if(role != null )
             {
-                Operation = 2,
-                State = GameState.PLAYING,
-                Role = GetRandomRole().RoleID,
-                Position = _map.GetStartPosition()
-            });
+                role.Role = GetRandomRole();
+            }
         }    
     }
 

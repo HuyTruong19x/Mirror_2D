@@ -12,13 +12,18 @@ public class ClientNetworkManager : MonoBehaviour
 
     public void OnClientDisconnect()
     {
-
+        NetworkClient.Send(new ServerRoomMessage()
+        {
+            Operation = ServerRoomOperation.REMOVE,
+        });
+        NetworkClient.UnregisterHandler<ClientRoomMessage>();
+        NetworkClient.UnregisterHandler<WaitingRoomMessage>();
     }
 
     public void OnStartClient()
     {
         NetworkClient.RegisterHandler<ClientRoomMessage>(OnClientMessage);
-        NetworkClient.RegisterHandler<GameMessage>(OnGameMessage);
+        NetworkClient.RegisterHandler<WaitingRoomMessage>(OnWaitingGameMessage);
     }
 
     public void OnStopClient()
@@ -69,8 +74,8 @@ public class ClientNetworkManager : MonoBehaviour
         EventDispatcher.Dispatch(ActionChannel.ROOM, message);
     }
 
-    private void OnGameMessage(GameMessage message)
+    private void OnWaitingGameMessage(WaitingRoomMessage message)
     {
-        EventDispatcher.Dispatch(ActionChannel.GAME, message);
+        EventDispatcher.Dispatch(ActionChannel.WAITING_ROOM, message);
     }
 }
