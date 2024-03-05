@@ -1,5 +1,6 @@
 using Mirror;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Room
 {
@@ -37,6 +38,14 @@ public class Room
     public void RemovePlayer(NetworkConnectionToClient user)
     {
         Players.Remove(user);
+        if (user == _hostPlayer)
+        {
+            _hostPlayer = Players.Count > 0 ? Players.ElementAt(0).Key : null;
+            if(_hostPlayer != null )
+            {
+                _hostPlayer.Send(new WaitingRoomMessage() { IsHost = true });
+            }
+        }
         UpdateRoomStatus();
     }
 
