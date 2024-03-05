@@ -11,6 +11,9 @@ public class GameManager : NetworkBehaviour
     public SyncList<Role> Roles = new SyncList<Role>();
     public List<NetworkConnectionToClient> Players = new List<NetworkConnectionToClient>();
 
+    [SerializeField]
+    private Map _map;
+
     [ServerCallback]
     public void AddPlayer(NetworkConnectionToClient player)
     {
@@ -28,7 +31,7 @@ public class GameManager : NetworkBehaviour
                 Operation = 2,
                 State = GameState.PLAYING,
                 Role = GetRandomRole().RoleID,
-                Position = Vector3.zero
+                Position = _map.GetStartPosition()
             });
         }    
     }
