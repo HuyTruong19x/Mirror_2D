@@ -33,7 +33,7 @@ public class ServerProcessor
                 if (array2.Length != 0)
                 {
                     num++;
-                    RegisterPacketHandler((ActionChannel)array2[0].Code, (IMessageHandler)Activator.CreateInstance(type));
+                    RegisterPacketHandler(array2[0].Code, (IMessageHandler)Activator.CreateInstance(type));
                 }
             }
         }

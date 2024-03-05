@@ -2,13 +2,7 @@ using Mirror;
 
 public struct GameMessage : NetworkMessage
 {
-    public ActionChannel Channel;
-    public Data Message;
-}
-
-public class Data
-{
-
+    public int doing;
 }
 
 public enum ActionChannel : byte

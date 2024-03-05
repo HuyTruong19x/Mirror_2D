@@ -1,5 +1,7 @@
 using Mirror;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ServerNetworkManager : MonoBehaviour
@@ -20,6 +22,7 @@ public class ServerNetworkManager : MonoBehaviour
     public void OnStartServer()
     {
         NetworkServer.RegisterHandler<ServerRoomMessage>(OnRoomMessage);
+        NetworkServer.RegisterHandler<GameMessage>(OnGameMessage);
         _processor = new ServerProcessor();
     }
 
@@ -28,10 +31,17 @@ public class ServerNetworkManager : MonoBehaviour
 
     }
 
+    #region callback
+
     private void OnRoomMessage(NetworkConnectionToClient conn, ServerRoomMessage message)
     {
         ProcessMessage(conn, ActionChannel.ROOM, message);
     }
+
+    private void OnGameMessage(NetworkConnectionToClient conn, GameMessage message)
+    {
+        ProcessMessage(conn, ActionChannel.GAME, message);
+    }    
 
     private void ProcessMessage(NetworkConnectionToClient conn, ActionChannel channel, NetworkMessage message)
     {
@@ -42,4 +52,13 @@ public class ServerNetworkManager : MonoBehaviour
 
         _processor.Handle(conn, channel, message);
     }
+
+    #endregion
+
+    [ServerCallback]
+    public void OnGameLoaded(string roomId)
+    {
+           
+
+    }    
 }

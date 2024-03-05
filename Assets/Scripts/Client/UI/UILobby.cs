@@ -2,6 +2,7 @@ using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UILobby : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class UILobby : MonoBehaviour
     private void OnCreatedRoom()
     {
         this.gameObject.SetActive(false);
+        SceneManager.LoadScene(2);
     }
 
     private void UpdateRoomList(List<LobbyRoomInfo> infos)

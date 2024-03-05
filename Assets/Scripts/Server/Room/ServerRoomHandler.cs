@@ -5,7 +5,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-[MessageAttribute((byte)ActionChannel.ROOM)]
+[MessageAttribute(ActionChannel.ROOM)]
 public class ServerRoomHandler : MessageHandler<ServerRoomMessage>
 {
     public override void Handle(NetworkConnectionToClient conn, ServerRoomMessage message)

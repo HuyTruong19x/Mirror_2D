@@ -1,8 +1,10 @@
 using Mirror;
-using Mirror.Examples.MultipleMatch;
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
+using System.Security.Cryptography;
+using Mirror.Examples.MultipleMatch;
 
 public class RoomManager : Singleton<RoomManager>
 {
@@ -10,15 +12,20 @@ public class RoomManager : Singleton<RoomManager>
 
     public Room CreateRoom(NetworkConnectionToClient conn, PlayerInfo info)
     {
+        if(Rooms.ContainsKey("xxxx"))
+        {
+            JoinRoom("xxxx", conn);
+            return Rooms["xxxx"];
+        }    
         var id = GetRandomID();
         var room = new Room(id, 4, "Tesst_" + UnityEngine.Random.Range(0, 9999), conn, info);
-        Rooms.Add(id, room);
+        Rooms.Add("xxxx", room);
         return room;
     }
 
     public Room JoinRoom(string id, NetworkConnectionToClient conn)
     {
-
+        Rooms[id].Players.Add(conn, new PlayerInfo());
         return null;
     }
 
@@ -56,3 +63,16 @@ public class RoomManager : Singleton<RoomManager>
         return _id;
     }
 }
+
+public static class RoomExtensions
+{
+    public static Guid ToGuid(this string id)
+    {
+        var provider = new MD5CryptoServiceProvider();
+        byte[] inputBytes = Encoding.Default.GetBytes(id);
+        byte[] hashBytes = provider.ComputeHash(inputBytes);
+
+        return new Guid(hashBytes);
+    }
+}
+
