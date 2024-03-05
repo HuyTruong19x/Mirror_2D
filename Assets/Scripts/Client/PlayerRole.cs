@@ -1,9 +1,11 @@
 using Mirror;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 public class PlayerRole : NetworkBehaviour
 {
-    [SyncVar] public int Role;
+    [SyncVar] public Role Role;
+
+    public void Execute(PlayerRole role)
+    {
+        Role.Action();
+    }
 }

@@ -1,7 +1,4 @@
 using Mirror;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +6,10 @@ public class UIPlayer : MonoBehaviour
 {
     [SerializeField]
     private Button _actionButton;
+    [SerializeField]
+    private PlayerRole _role;
+
+    private PlayerRole _targetPlayerRole;
 
     private void OnEnable()
     {
@@ -28,4 +29,14 @@ public class UIPlayer : MonoBehaviour
     {
         _actionButton.interactable = canInteract;
     }    
+
+    public void SetTarget(PlayerRole playerRole)
+    {
+        _targetPlayerRole = playerRole;
+    }
+
+    public void Action()
+    {
+        _role.Execute(_targetPlayerRole);
+    }
 }

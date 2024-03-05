@@ -17,7 +17,7 @@ public class PlayerCollider : NetworkBehaviour
         if(collision.CompareTag("Player"))
         {
             Debug.Log("Has collider action");
-            ShowUI();
+            ShowUI(collision.GetComponent<PlayerRole>());
         }    
     }
 
@@ -28,7 +28,7 @@ public class PlayerCollider : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void ShowUI()
+    private void ShowUI(PlayerRole playerRole)
     {
         if(!isLocalPlayer || _controller.State != GameState.PLAYING)
         {
@@ -37,6 +37,7 @@ public class PlayerCollider : NetworkBehaviour
 
         Debug.Log("Show ui");
         _playerUI.SetInteract(true);
+        _playerUI.SetTarget(playerRole);
     }
 
     [ClientRpc]

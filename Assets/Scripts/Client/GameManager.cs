@@ -70,18 +70,18 @@ public class GameManager : NetworkBehaviour
 
         for (int i = 0; i < wolfCount;i++)
         {
-            Roles.Add(new Role());//TODO add wolf
+            Roles.Add(new RoleWolf());
         }
 
         for (int i = 0; i < foxCount; i++)
         {
-            Roles.Add(new Role());//TODO add fox
+            Roles.Add(new RoleFox());
         }
 
         int playerCount = Players.Count - wolfCount - foxCount;
         for (int i = 0; i < playerCount; i++)
         {
-            Roles.Add(new Role());//TODO add dog
+            Roles.Add(new RoleDog());
         }
 
         Roles.Shuffer();

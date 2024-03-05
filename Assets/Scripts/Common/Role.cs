@@ -1,8 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using System;
 
+[Serializable]
 public class Role
 {
     public int RoleID;
+
+    public virtual void Action()
+    {
+
+    }
 }

@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using System.Security.Cryptography;
-using Mirror.Examples.MultipleMatch;
-using System.Linq;
 
 public class RoomManager : Singleton<RoomManager>
 {

@@ -1,5 +1,4 @@
 using Mirror;
-using System;
 using UnityEngine;
 
 public struct GameMessage : NetworkMessage
