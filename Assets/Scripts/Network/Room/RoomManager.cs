@@ -5,43 +5,51 @@ using System.Text;
 using UnityEngine;
 using System.Security.Cryptography;
 using Mirror.Examples.MultipleMatch;
+using System.Linq;
 
 public class RoomManager : Singleton<RoomManager>
 {
-    public Dictionary<string, Room> Rooms = new();
+    private Dictionary<string, Room> Rooms = new();
+    private List<LobbyRoomInfo> RoomInfos = new();
+    private int _maxPlayer = 16;
 
     public Room CreateRoom(NetworkConnectionToClient conn, PlayerInfo info)
     {
-        if(Rooms.ContainsKey("xxxx"))
-        {
-            JoinRoom("xxxx", conn);
-            return Rooms["xxxx"];
-        }    
         var id = GetRandomID();
-        var room = new Room(id, 4, "Tesst_" + UnityEngine.Random.Range(0, 9999), conn, info);
-        Rooms.Add("xxxx", room);
+        var room = new Room(id, _maxPlayer, "Tesst_" + UnityEngine.Random.Range(0, 9999), conn, info);
+        Rooms.Add(id, room);
+        RoomInfos.Add(room.Info);
         return room;
     }
 
-    public Room JoinRoom(string id, NetworkConnectionToClient conn)
+    public Room JoinRoom(string id, NetworkConnectionToClient conn, PlayerInfo playerInfo)
     {
-        Rooms[id].Players.Add(conn, new PlayerInfo());
+        if (Rooms.ContainsKey(id))
+        {
+            Rooms[id].AddPlayer(conn, playerInfo);
+            return Rooms[id];
+        }
         return null;
     }
 
     public void LeaveRoom(NetworkConnectionToClient conn, string id)
     {
+
     }
 
-    public void StartGame(string id)
+    public List<LobbyRoomInfo> GetRoomListInfo()
     {
-        for (int i = 0; i < Rooms.Count; i++)
+        return RoomInfos;
+    }
+
+    public Room GetRoom(string id)
+    {
+        if(Rooms.ContainsKey(id))
         {
-            //if (Rooms[i].ID == id)
-            //{
-            //    Rooms[i].StartGame();
-            //}
+            return Rooms[id];
         }
+
+        return null;
     }
 
     public static string GetRandomID()

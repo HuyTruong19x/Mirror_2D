@@ -2,17 +2,17 @@ using Mirror;
 using Mirror.Examples.MultipleMatch;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Room
 {
-    public string ID;
-    public string Title;
-    public int MaxPlayer;
-    public bool IsInGame;
+    public LobbyRoomInfo Info;
     public Dictionary<NetworkConnectionToClient, PlayerInfo> Players = new();
 
-    public bool IsFull => Players.Count == MaxPlayer;
+    private NetworkConnectionToClient _hostPlayer;
+
+    public bool IsFull => Players.Count == Info.MaxPlayer;
 
     public Room()
     {
@@ -21,23 +21,24 @@ public class Room
 
     public Room(string id, int maxPlayer, string title, NetworkConnectionToClient user, PlayerInfo info)
     {
-        ID = id;
-        Title = title;
-        MaxPlayer = maxPlayer;
+        Info = new LobbyRoomInfo(id, info.Name, "Random", "Map_1", maxPlayer);
         Players.Add(user, info);
+        _hostPlayer = user;
+        UpdateRoomStatus();
     }
 
-    public void Add(NetworkConnectionToClient user, PlayerInfo info)
+    private void UpdateRoomStatus()
     {
-        foreach (var playerInRoom in Players)
-        {
-            //playerInRoom.RpcPlayerJoinRoom(user.Info);
-        }
-
-        Players.Add(user, info);
+        Info.UpdateStatus($"{Players.Count}/{Info.MaxPlayer}");
     }
 
-    public void Remove(NetworkIdentity user)
+    public void AddPlayer(NetworkConnectionToClient user, PlayerInfo info)
+    {
+        Players.Add(user, info);
+        UpdateRoomStatus();
+    }
+
+    public void RemovePlayer(NetworkIdentity user)
     {
         //for (int i = 0; i < Players.Count; i++)
         //{
@@ -55,11 +56,8 @@ public class Room
         //}
     }
 
-    public void StartGame()
+    public bool IsHost(NetworkConnectionToClient player)
     {
-        for (int i = 0; i < Players.Count; i++)
-        {
-            //Players[i].RpcStartGame();
-        }
+        return _hostPlayer == player;
     }
 }

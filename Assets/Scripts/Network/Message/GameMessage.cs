@@ -1,8 +1,15 @@
 using Mirror;
+using System;
+using UnityEngine;
 
 public struct GameMessage : NetworkMessage
 {
-    public int doing;
+    public int Operation;
+    public string RoomID;
+    public int Role;
+    public GameState State;
+    public bool IsHost;
+    public Vector3 Position;
 }
 
 public enum ActionChannel : byte

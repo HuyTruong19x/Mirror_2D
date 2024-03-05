@@ -15,6 +15,7 @@ public struct ServerRoomMessage : NetworkMessage
 {
     public ServerRoomOperation Operation;
     public string RoomID;
+    public PlayerInfo PlayerInfo;
 }
 
 public enum ClientRoomOperation : byte
@@ -26,6 +27,8 @@ public enum ClientRoomOperation : byte
     UPDATED = 4,
     CANCELLED = 5,
     LEAVED = 6,
+    JOIN_FAIL = 7,
+    CREATE_FAIL = 8,
 }
 
 public enum ServerRoomOperation : byte

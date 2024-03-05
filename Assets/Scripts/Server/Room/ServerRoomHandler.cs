@@ -1,9 +1,7 @@
 using Mirror;
-using System.Collections;
+using Mono.CecilX.Cil;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEngine;
 
 [MessageAttribute(ActionChannel.ROOM)]
 public class ServerRoomHandler : MessageHandler<ServerRoomMessage>
@@ -12,33 +10,53 @@ public class ServerRoomHandler : MessageHandler<ServerRoomMessage>
     {
         switch (message.Operation)
         {
-            case ServerRoomOperation.CREATE: CreateRoom(conn); break;
-            case ServerRoomOperation.JOIN: JoinRoom(conn, message.RoomID); break;
+            case ServerRoomOperation.CREATE: CreateRoom(conn, message); break;
+            case ServerRoomOperation.JOIN: JoinRoom(conn, message); break;
             case ServerRoomOperation.LIST: GetRoomList(conn); break;
         }
     }
 
-    private void CreateRoom(NetworkConnectionToClient conn)
+    private void CreateRoom(NetworkConnectionToClient conn, ServerRoomMessage message)
     {
-        Debug.Log("Request create room");
-        var result = RoomManager.Instance.CreateRoom(conn, new Mirror.Examples.MultipleMatch.PlayerInfo());
-        conn.Send(new ClientRoomMessage()
+        var result = RoomManager.Instance.CreateRoom(conn, message.PlayerInfo);
+        
+        if (result != null)
         {
-            Operation = ClientRoomOperation.CREATED,
-            RoomID = result.ID,
-            RoomName = result.Title
-        });
+            conn.Send(new ClientRoomMessage()
+            {
+                Operation = ClientRoomOperation.CREATED,
+                RoomID = result.Info.ID,
+                RoomName = result.Info.HostName
+            });
+        }
+        else
+        {
+            conn.Send(new ClientRoomMessage()
+            {
+                Operation = ClientRoomOperation.JOIN_FAIL,
+            });
+        }
     }
 
-    private void JoinRoom(NetworkConnectionToClient conn, string roomID)
+    private void JoinRoom(NetworkConnectionToClient conn, ServerRoomMessage message)
     {
-        var result = RoomManager.Instance.JoinRoom(roomID, conn);
-        conn.Send(new ClientRoomMessage()
+        var result = RoomManager.Instance.JoinRoom(message.RoomID, conn, message.PlayerInfo);
+        if (result != null)
         {
-            Operation = ClientRoomOperation.JOINED,
-            RoomID = result.ID,
-            RoomName = result.Title
-        });
+            conn.Send(new ClientRoomMessage()
+            {
+                Operation = ClientRoomOperation.JOINED,
+                RoomID = result.Info.ID,
+                RoomName = result.Info.HostName
+            });
+        }
+        else
+        {
+            conn.Send(new ClientRoomMessage()
+            {
+                Operation = ClientRoomOperation.JOIN_FAIL,
+            });
+        }
     }
 
     private void LeaveRoom(NetworkConnectionToClient conn, string roomID)
@@ -48,15 +66,10 @@ public class ServerRoomHandler : MessageHandler<ServerRoomMessage>
 
     private void GetRoomList(NetworkConnectionToClient conn)
     {
-        var roomList = new List<LobbyRoomInfo>();
-        foreach (var room in RoomManager.Instance.Rooms.ToArray())
-        {
-            roomList.Add(new LobbyRoomInfo(room.Value.ID, room.Value.Title, "Random", "map_", "1/22"));
-        }
         conn.Send(new ClientRoomMessage()
         {
             Operation = ClientRoomOperation.LIST,
-            Rooms = roomList
+            Rooms = RoomManager.Instance.GetRoomListInfo()
         });
     }
 }

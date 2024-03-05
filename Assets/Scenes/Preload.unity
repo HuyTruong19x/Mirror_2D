@@ -489,6 +489,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcf138fadbaf1904992a96289ad541cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RoomID: 
 --- !u!114 &1441692249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -547,7 +548,7 @@ MonoBehaviour:
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 4704560122995238271, guid: 21559b1b77feb1e4684d4aec0bcd1eaf, type: 3}
   autoCreatePlayer: 0
-  playerSpawnMethod: 1
+  playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 8380794102469554877, guid: 5616fb93fc1c97f4c8f27140accede78, type: 3}
   exceptionsDisconnect: 1

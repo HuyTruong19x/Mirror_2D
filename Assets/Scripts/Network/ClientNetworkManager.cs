@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class ClientNetworkManager : MonoBehaviour
 {
+    public string RoomID;
+
     public void OnClientConnect()
     {
 
@@ -16,6 +18,7 @@ public class ClientNetworkManager : MonoBehaviour
     public void OnStartClient()
     {
         NetworkClient.RegisterHandler<ClientRoomMessage>(OnClientMessage);
+        NetworkClient.RegisterHandler<GameMessage>(OnGameMessage);
     }
 
     public void OnStopClient()
@@ -41,8 +44,23 @@ public class ClientNetworkManager : MonoBehaviour
         });
     }
 
+    [ClientCallback]
+    public void RequestJoinRoom(string roomId)
+    {
+        NetworkClient.Send(new ServerRoomMessage()
+        {
+            Operation = ServerRoomOperation.JOIN,
+            RoomID = roomId
+        });
+    }
+
     private void OnClientMessage(ClientRoomMessage message)
     {
         EventDispatcher.Dispatch(ActionChannel.ROOM, message);
+    }
+
+    private void OnGameMessage(GameMessage message)
+    {
+        EventDispatcher.Dispatch(ActionChannel.GAME, message);
     }
 }

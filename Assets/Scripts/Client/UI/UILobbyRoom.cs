@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,8 @@ public class UILobbyRoom : MonoBehaviour
     [SerializeField]
     private Text _status;
 
+    private Action<string> OnClick;
+
     public UILobbyRoom Setup(LobbyRoomInfo info)
     {
         _hostName.text = info.HostName;
@@ -25,10 +28,21 @@ public class UILobbyRoom : MonoBehaviour
         return this;
     }
 
+    public UILobbyRoom OnButtonClick(Action<string> onClick)
+    {
+        OnClick = onClick;
+        return this;
+    }
+
     public void Show()
     {
         gameObject.SetActive(true);
     }
+
+    public void Click()
+    {
+        OnClick(_roomInfo.ID);
+    }    
 }
 
 public class LobbyRoomInfo
@@ -38,13 +52,19 @@ public class LobbyRoomInfo
     public string Mode;
     public string Map;
     public string Status;
+    public int MaxPlayer;
 
-    public LobbyRoomInfo(string id, string hostName, string mode, string map, string status)
+    public LobbyRoomInfo(string id, string hostName, string mode, string map, int maxPlayer)
     {
         ID = id;
         HostName = hostName;
         Mode = mode;
         Map = map;
+        MaxPlayer = maxPlayer;
+    }
+
+    public void UpdateStatus(string status)
+    {
         Status = status;
     }
 
