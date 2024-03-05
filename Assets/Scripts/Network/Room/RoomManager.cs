@@ -16,7 +16,8 @@ public class RoomManager : Singleton<RoomManager>
     public Room CreateRoom(NetworkConnectionToClient conn, PlayerInfo info)
     {
         var id = GetRandomID();
-        var room = new Room(id, _maxPlayer, "Tesst_" + UnityEngine.Random.Range(0, 9999), conn, info);
+        var roomInfo = new LobbyRoomInfo(id, info.Name, "Random", "Map_1", _maxPlayer);
+        var room = new Room(conn, info, roomInfo);
         Rooms.Add(id, room);
         RoomInfos.Add(room.Info);
         return room;

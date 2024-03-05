@@ -19,11 +19,11 @@ public class Room
 
     }
 
-    public Room(string id, int maxPlayer, string title, NetworkConnectionToClient user, PlayerInfo info)
+    public Room(NetworkConnectionToClient user, PlayerInfo info, LobbyRoomInfo roomInfo)
     {
-        Info = new LobbyRoomInfo(id, info.Name, "Random", "Map_1", maxPlayer);
-        Players.Add(user, info);
+        Info = roomInfo;
         _hostPlayer = user;
+        Players.Add(user, info);
         UpdateRoomStatus();
     }
 

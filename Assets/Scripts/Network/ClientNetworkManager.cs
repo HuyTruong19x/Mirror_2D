@@ -31,7 +31,12 @@ public class ClientNetworkManager : MonoBehaviour
     {
         NetworkClient.Send(new ServerRoomMessage()
         {
-            Operation = ServerRoomOperation.CREATE
+            Operation = ServerRoomOperation.CREATE,
+            PlayerInfo = new PlayerInfo()
+            {
+                ID = Random.Range(0, 100000),
+                Name = "User_" + Random.Range(0, 100000)
+            }// TODO get player info from data
         });
     }
 
@@ -50,7 +55,12 @@ public class ClientNetworkManager : MonoBehaviour
         NetworkClient.Send(new ServerRoomMessage()
         {
             Operation = ServerRoomOperation.JOIN,
-            RoomID = roomId
+            RoomID = roomId,
+            PlayerInfo = new PlayerInfo()
+            {
+                ID = Random.Range(0, 100000),
+                Name = "User_" + Random.Range(0, 100000)
+            }// TODO get player info from data
         });
     }
 
