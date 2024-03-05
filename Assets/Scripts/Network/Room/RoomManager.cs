@@ -23,12 +23,13 @@ public class RoomManager : Singleton<RoomManager>
 
     public Room JoinRoom(string id, NetworkConnectionToClient conn, PlayerInfo playerInfo)
     {
-        if (Rooms.ContainsKey(id))
+        if (!Rooms.ContainsKey(id) || Rooms[id].IsFull)
         {
-            Rooms[id].AddPlayer(conn, playerInfo);
-            return Rooms[id];
+            return null;
         }
-        return null;
+
+        Rooms[id].AddPlayer(conn, playerInfo);
+        return Rooms[id];
     }
 
     public void LeaveRoom(NetworkConnectionToClient conn)

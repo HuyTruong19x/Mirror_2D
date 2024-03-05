@@ -33,7 +33,10 @@ public class GameController : MonoBehaviour
     {
         var gm = (WaitingRoomMessage)message;
         _uiGame.SetHost(gm.IsHost);
-        _currentState = gm.State;
+        if(gm.State != GameState.NONE)
+        {
+            _currentState = gm.State;
+        }
         OnStateChange();
     }    
 

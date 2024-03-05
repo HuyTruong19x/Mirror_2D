@@ -28,13 +28,19 @@ public class PlayerCollider : NetworkBehaviour
     [ClientRpc]
     private void ShowUI(PlayerRole playerRole)
     {
-        _playerRole.Show(playerRole);
+        if(isLocalPlayer)
+        {
+            _playerRole.Show(playerRole);
+        }
     }
 
     [ClientRpc]
     private void HideUI()
     {
-        Debug.Log("hide ui");
-        _playerRole.Hide();
+        if(isLocalPlayer)
+        {
+            Debug.Log("hide ui");
+            _playerRole.Hide();
+        }
     }
 }

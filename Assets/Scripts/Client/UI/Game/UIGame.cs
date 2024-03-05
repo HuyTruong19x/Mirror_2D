@@ -1,5 +1,6 @@
 using Mirror;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIGame : MonoBehaviour
@@ -19,5 +20,15 @@ public class UIGame : MonoBehaviour
             Operation = 2,
             RoomID = GameNetworkManager.singleton.Client.RoomID
         });
+    }
+
+    public void ExitGame()
+    {
+        NetworkClient.Send(new GameMessage()
+        {
+            Operation = 3,
+            RoomID = GameNetworkManager.singleton.Client.RoomID
+        });
+        SceneManager.LoadScene(1);
     }
 }

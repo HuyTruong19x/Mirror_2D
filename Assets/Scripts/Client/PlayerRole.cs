@@ -17,24 +17,27 @@ public class PlayerRole : NetworkBehaviour
 
     public void UpdateGameUI(Role oldRole, Role newRole)
     {
-        _currentView ??= Instantiate(_uiPlayer);
-        newRole.UpdateUI(_currentView);
-    }
-
-    public UIPlayer GetUI()
-    {
-        _currentView ??= Instantiate(_uiPlayer);
-        return _currentView;
+        if (isLocalPlayer)
+        {
+            _currentView ??= Instantiate(_uiPlayer);
+            newRole.UpdateUI(_currentView);
+        }
     }
 
     public void Show(PlayerRole role)
     {
-        _currentView.SetInteract(true);
-        _target = role;
+        if(isLocalPlayer)
+        {
+            _currentView.SetInteract(true);
+            _target = role;
+        }
     }
 
     public void Hide()
     {
-        _currentView.SetInteract(false);
+        if (isLocalPlayer)
+        {
+            _currentView?.SetInteract(false);
+        }
     }
 }
