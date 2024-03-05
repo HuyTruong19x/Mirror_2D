@@ -21,6 +21,7 @@ public class ServerNetworkManager : MonoBehaviour
     {
         NetworkServer.RegisterHandler<ServerRoomMessage>(OnRoomMessage);
         NetworkServer.RegisterHandler<GameMessage>(OnGameMessage);
+        NetworkServer.RegisterHandler<ServerMatchMessage>(OnServerMatchMessageReceive);
         _processor = new ServerProcessor();
     }
 
@@ -40,6 +41,11 @@ public class ServerNetworkManager : MonoBehaviour
     {
         ProcessMessage(conn, ActionChannel.GAME, message);
     }    
+
+    private void OnServerMatchMessageReceive(NetworkConnectionToClient conn, ServerMatchMessage message)
+    {
+        ProcessMessage(conn, ActionChannel.MATCH, message);
+    }
 
     private void ProcessMessage(NetworkConnectionToClient conn, ActionChannel channel, NetworkMessage message)
     {

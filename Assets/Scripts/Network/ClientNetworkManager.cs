@@ -29,14 +29,22 @@ public class ClientNetworkManager : MonoBehaviour
     [ClientCallback]
     public void RequestCreateRoom()
     {
-        NetworkClient.Send(new ServerRoomMessage()
+        var playerInfo = new PlayerInfo()
         {
-            Operation = ServerRoomOperation.CREATE,
-            PlayerInfo = new PlayerInfo()
+            ID = "ID_" + Random.Range(0, 100000),
+            Name = "User_" + Random.Range(0, 100000)
+        };
+        NetworkClient.Send(new ServerMatchMessage()
+        {
+            Operation = MatchOperation.CREATE,
+            MatchInfo = new MatchInfo()
             {
-                ID = Random.Range(0, 100000),
-                Name = "User_" + Random.Range(0, 100000)
-            }// TODO get player info from data
+                HostName = playerInfo.Name,
+                Mode = "Random",
+                Map = "Map_0",
+                MaxPlayer = 16
+            },
+            PlayerInfo = playerInfo// TODO get player info from data
         });
     }
 
@@ -52,15 +60,16 @@ public class ClientNetworkManager : MonoBehaviour
     [ClientCallback]
     public void RequestJoinRoom(string roomId)
     {
-        NetworkClient.Send(new ServerRoomMessage()
+        var playerInfo = new PlayerInfo()
         {
-            Operation = ServerRoomOperation.JOIN,
-            RoomID = roomId,
-            PlayerInfo = new PlayerInfo()
-            {
-                ID = Random.Range(0, 100000),
-                Name = "User_" + Random.Range(0, 100000)
-            }// TODO get player info from data
+            ID = "ID_" + Random.Range(0, 100000),
+            Name = "User_" + Random.Range(0, 100000)
+        };
+        NetworkClient.Send(new ServerMatchMessage()
+        {
+            Operation = MatchOperation.JOIN,
+            MatchID = roomId,
+            PlayerInfo = playerInfo// TODO get player info from data
         });
     }
 

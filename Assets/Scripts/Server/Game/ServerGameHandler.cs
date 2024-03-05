@@ -10,11 +10,11 @@ public class ServerGameHandler : MessageHandler<GameMessage>
 
     public override void Handle(NetworkConnectionToClient conn, GameMessage message)
     {
-        switch(message.Operation)
-        {
-            case 1: OnAlreadyJoinGame(conn, message); break;
-            case 2: OnStartGame(conn, message); break;
-        }    
+        //switch(message.Operation)
+        //{
+        //    case 1: OnAlreadyJoinGame(conn, message); break;
+        //    case 2: OnStartGame(conn, message); break;
+        //}    
     }
 
     private void OnAlreadyJoinGame(NetworkConnectionToClient conn, GameMessage message)

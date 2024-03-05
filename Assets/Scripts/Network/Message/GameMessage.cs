@@ -25,4 +25,5 @@ public enum ActionChannel : byte
     ROOM = 1,
     GAME = 2,
     WAITING_ROOM = 3,
+    MATCH = 4,
 }

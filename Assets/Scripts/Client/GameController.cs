@@ -1,4 +1,5 @@
 using Mirror;
+using System.Collections;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
@@ -21,10 +22,10 @@ public class GameController : MonoBehaviour
     void Start()
     {
         Debug.Log("Request room id " + GameNetworkManager.singleton.Client.RoomID);
-        NetworkClient.Send(new GameMessage()
+        NetworkClient.Send(new ServerMatchMessage()
         {
-            Operation = 1,
-            RoomID = GameNetworkManager.singleton.Client.RoomID
+            Operation = MatchOperation.LOADED_GAME_SCENE,
+            MatchID = GameNetworkManager.singleton.Client.RoomID
         });
     }
 

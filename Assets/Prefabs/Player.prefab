@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 1338820201126488004}
   - component: {fileID: 6841728930540758539}
   - component: {fileID: -1784903956088051286}
+  - component: {fileID: -5617717059102685040}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -324,6 +325,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _uiPlayer: {fileID: 989867667909634024, guid: e4a76859dbfe17f448d7e54fdf19df44, type: 3}
+  _target: {fileID: 0}
   Role:
     RoleID: 0
 --- !u!114 &-1784903956088051286
@@ -341,3 +343,19 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!114 &-5617717059102685040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4704560122995238271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 267dc79c9375757468cc34171f0cc24e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  MatchID: 

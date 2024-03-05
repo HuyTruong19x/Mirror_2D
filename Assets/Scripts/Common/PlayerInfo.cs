@@ -1,5 +1,5 @@
 public struct PlayerInfo
 {
-    public int ID;
+    public string ID;
     public string Name;
 }
