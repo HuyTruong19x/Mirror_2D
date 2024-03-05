@@ -1,8 +1,9 @@
 using Mirror;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : NetworkBehaviour
+public class Game : NetworkBehaviour
 {
     [SyncVar] public int DiscussTime = 180;
     [SyncVar] public int VoteTime = 30;
@@ -21,18 +22,24 @@ public class GameManager : NetworkBehaviour
     }
 
     [ServerCallback]
+    public void RemovePlayer(PlayerController player)
+    {
+        Players.Remove(player);
+    }
+
+    [ServerCallback]
     public void StartGame()
     {
         SetupRole();
-        foreach(var player in Players)
+        foreach (var player in Players)
         {
             player.StartGame(_map.GetStartPosition());
             var role = player.GetComponent<PlayerRole>();
-            if(role != null )
+            if (role != null)
             {
                 role.Role = GetRandomRole();
             }
-        }    
+        }
     }
 
     [ServerCallback]
@@ -60,14 +67,14 @@ public class GameManager : NetworkBehaviour
         {
             wolfCount = 2;
             foxCount = 2;
-        }   
+        }
         else
         {
             wolfCount = 3;
             foxCount = 3;
-        }    
+        }
 
-        for (int i = 0; i < wolfCount;i++)
+        for (int i = 0; i < wolfCount; i++)
         {
             Roles.Add(new RoleWolf());
         }

@@ -1,8 +1,10 @@
 using Mirror;
+using System;
 using UnityEngine;
 
 public class PlayerController : NetworkBehaviour
 {
+    public Guid GameId;
     private Rigidbody2D _rid2D;
 
     [ServerCallback]
@@ -37,5 +39,6 @@ public class PlayerController : NetworkBehaviour
     public void Disconnected(NetworkConnectionToClient conn)
     {
         RoomManager.Instance.LeaveRoom(conn);
+        GameManager.Instance.RemovePlayerFromGame(GameId, this);
     }
 }

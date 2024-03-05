@@ -6,7 +6,6 @@ using UnityEngine;
 [MessageAttribute(ActionChannel.GAME)]
 public class ServerGameHandler : MessageHandler<GameMessage>
 {
-    private Dictionary<Guid, GameManager> _gameManagers = new();
     private Dictionary<NetworkConnectionToClient, GameObject> _games = new();
 
     public override void Handle(NetworkConnectionToClient conn, GameMessage message)
@@ -21,12 +20,9 @@ public class ServerGameHandler : MessageHandler<GameMessage>
     private void OnAlreadyJoinGame(NetworkConnectionToClient conn, GameMessage message)
     {
         var roomGuid = message.RoomID.ToGuid();
-        if (!_gameManagers.ContainsKey(roomGuid))
+        if (!GameManager.Instance.HasRoom(roomGuid))
         {
-            GameObject matchControllerObject = GameObject.Instantiate(NetworkManager.singleton.spawnPrefabs[0]);
-            matchControllerObject.GetComponent<NetworkMatch>().matchId = message.RoomID.ToGuid();
-            _gameManagers[roomGuid] = matchControllerObject.GetComponent<GameManager>();
-            NetworkServer.Spawn(_gameManagers[roomGuid].gameObject);
+            NetworkServer.Spawn(GameManager.Instance.CreateGame(roomGuid));
         }
 
         var room = RoomManager.Instance.GetRoom(message.RoomID);
@@ -49,7 +45,7 @@ public class ServerGameHandler : MessageHandler<GameMessage>
                 player.GetComponent<NetworkMatch>().matchId = roomGuid;
                 NetworkServer.AddPlayerForConnection(item.Key, player);
                 _games.Add(item.Key, player);
-                _gameManagers[roomGuid].AddPlayer(player.GetComponent<PlayerController>());
+                GameManager.Instance.AddPlayerToGame(roomGuid, player.GetComponent<PlayerController>());
             }
         }
 
@@ -63,13 +59,6 @@ public class ServerGameHandler : MessageHandler<GameMessage>
     public void OnStartGame(NetworkConnectionToClient conn, GameMessage message)
     {
         var roomGuid = message.RoomID.ToGuid();
-        if(_gameManagers.ContainsKey(roomGuid))
-        {
-            _gameManagers[roomGuid].StartGame();
-        }
-        else
-        {
-            Debug.LogWarning($"Could not start room {message.RoomID} due to not found");
-        }    
+        GameManager.Instance.StartGame(roomGuid);
     }
 }
