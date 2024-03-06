@@ -1,19 +1,17 @@
 using Mirror;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Match : NetworkBehaviour
 {
-    public List<Player> Players => _players;
-    public List<NetworkConnectionToClient> Connections => _connections;
+    public bool IsEmpty => _Player.Count == 0;
     public MatchInfo Info => _info;
 
     [SerializeField]
     [SyncVar] private MatchInfo _info;
-
-    private List<Player> _players = new List<Player>();
-    private List<NetworkConnectionToClient> _connections = new();
+    private Dictionary<NetworkConnectionToClient, Player> _Player = new();
 
     [SerializeField]
     private Map _map;
@@ -21,51 +19,72 @@ public class Match : NetworkBehaviour
     public void Initialize(NetworkConnectionToClient conn, MatchInfo info)
     {
         _info = info;
-        _connections.Add(conn);
+        _Player.Add(conn, null);
     }
 
     public bool JoinMatch(NetworkConnectionToClient conn)
     {
-        if(_connections.Count >= _info.MaxPlayer)
+        if (_Player.Count >= _info.MaxPlayer)
         {
             return false;
         }
 
-        _connections.Add(conn);
+        _Player.Add(conn, null);
         return true;
     }
 
-    public void AddPlayer(Player player)
+    public bool AddPlayer(NetworkConnectionToClient conn, Player player)
     {
-        player.IsHost = _players.Count == 0;
-        player.GameState = GameState.WAITING;
-        _players.Add(player);
-        _info.UpdateStatus($"{_players.Count} / {_info.MaxPlayer}");
+        if (_Player.ContainsKey(conn))
+        {
+            player.MatchID = _info.ID;
+            player.IsHost = _Player.Count == 0;
+            player.GameState = GameState.WAITING;
+            _Player[conn] = player;
+            UpdateMatchStatus();
+            return true;
+        }
+
+        return false;
     }
 
-    public void RemovePlayer(Player player)
+    public void RemovePlayer(NetworkConnectionToClient conn)
     {
-        _players.Remove(player);
-        _info.UpdateStatus($"{_players.Count} / {_info.MaxPlayer}");
+        if (_Player.ContainsKey(conn))
+        {
+            _Player[conn] = null;
+            UpdateMatchStatus();
+        }
     }
 
     public void LeaveMatch(NetworkConnectionToClient conn)
     {
-        if (_connections.Contains(conn))
+        if (_Player.ContainsKey(conn))
         {
-            _connections.Remove(conn);
+            _Player.Remove(conn);
+            UpdateMatchStatus();
         }
     }
 
     public void StartMatch()
     {
-        _map.SetupRole(Players.Count);
+        _map.SetupRole(_Player.Count);
 
-        foreach(Player player in _players)
+        foreach (var player in _Player)
         {
-            player.SetRole(_map.GetRandomRole());
-            player.StartGame();
-            player.MoveToPosition(_map.GetStartPosition());
+            player.Value.SetRole(_map.GetRandomRole());
+            player.Value.StartGame();
+            player.Value.MoveToPosition(_map.GetStartPosition());
         }
+    }
+
+    private void UpdateMatchStatus()
+    {
+        _info.UpdateStatus($"{_Player.Where(x => x.Value != null).ToList().Count} / {_info.MaxPlayer}");
+    }
+
+    public List<NetworkConnectionToClient> GetConnections()
+    {
+        return _Player.Keys.ToList();
     }
 }

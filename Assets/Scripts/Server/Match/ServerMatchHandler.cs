@@ -48,20 +48,20 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
         if (!_matchs.ContainsKey(matchID))
         {
             var go = MatchManager.Instance.GetMatchObject(matchID);
-            if(go != null)
+            if (go != null)
             {
                 NetworkServer.Spawn(go);
-            }    
+            }
             else
             {
                 Debug.Log("Could not spawn match object due to not found");
-            }    
+            }
         }
 
-        SpawnPlayer(conn, matchID);
+        SpawnPlayer(matchID);
     }
 
-    private void SpawnPlayer(NetworkConnectionToClient conn, string matchID)
+    private void SpawnPlayer(string matchID)
     {
         var match = MatchManager.Instance.GetMatch(matchID);
 
@@ -71,7 +71,7 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
             return;
         }
 
-        foreach (var item in match.Connections)
+        foreach (var item in match.GetConnections())
         {
             if (_players.ContainsKey(item))
             {
@@ -80,10 +80,10 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
             else
             {
                 GameObject player = GameObject.Instantiate(NetworkManager.singleton.playerPrefab);
-                if (MatchManager.Instance.AddPlayerToMatch(matchID, player.GetComponent<Player>()))
+                if (MatchManager.Instance.AddPlayerToMatch(item, matchID, player.GetComponent<Player>()))
                 {
                     player.GetComponent<NetworkMatch>().matchId = matchID.ToGuid();
-                    NetworkServer.AddPlayerForConnection(conn, player);
+                    NetworkServer.AddPlayerForConnection(item, player);
                     _players.Add(item, player);
                 }
                 else
@@ -96,6 +96,7 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
 
     private void LeaveMatch(NetworkConnectionToClient conn, ServerMatchMessage message)
     {
+        _players.Remove(conn);
         MatchManager.Instance.LeaveMatch(conn, message.MatchID);
     }
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public class MatchManager : Singleton<MatchManager>
@@ -29,7 +30,7 @@ public class MatchManager : Singleton<MatchManager>
     {
         if (_matchs.ContainsKey(matchID))
         {
-            if(_matchs[matchID].JoinMatch(conn))
+            if (_matchs[matchID].JoinMatch(conn))
             {
                 return _matchs[matchID];
             }
@@ -62,29 +63,14 @@ public class MatchManager : Singleton<MatchManager>
         return null;
     }
 
-    public bool AddPlayerToMatch(string matchId, Player player)
+    public bool AddPlayerToMatch(NetworkConnectionToClient conn, string matchId, Player player)
     {
-        if (_matchs.ContainsKey(matchId) && !_matchs[matchId].Players.Contains(player))
+        if (_matchs.ContainsKey(matchId))
         {
-            player.MatchID = matchId;
-            _matchs[matchId].AddPlayer(player);
-            return true;
+            return _matchs[matchId].AddPlayer(conn, player);
         }
 
         return false;
-    }
-
-    public void RemovePlayerFromMatch(Player player)
-    {
-        if (_matchs.ContainsKey(player.MatchID))
-        {
-            _matchs[player.MatchID].RemovePlayer(player);
-            if (_matchs[player.MatchID].Players.Count <= 0)
-            {
-                _matchs.Remove(player.MatchID);
-                GameObject.Destroy(_matchs[player.MatchID].gameObject);
-            }
-        }
     }
 
     public void LeaveMatch(NetworkConnectionToClient conn, string matchID)
@@ -92,9 +78,10 @@ public class MatchManager : Singleton<MatchManager>
         if (_matchs.ContainsKey(matchID))
         {
             _matchs[matchID].LeaveMatch(conn);
-            if (_matchs[matchID].Connections.Count <= 0)
+            if (_matchs[matchID].IsEmpty)
             {
                 GameObject.Destroy(_matchs[matchID].gameObject);
+                _matchs.Remove(matchID);
             }
         }
     }

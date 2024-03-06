@@ -59,8 +59,11 @@ public class UILobby : MonoBehaviour
 
         foreach (var match in infos)
         {
+            var lobbyInfo = new LobbyRoomInfo(match.ID, match.HostName, match.Mode, match.Map, match.MaxPlayer);
+            lobbyInfo.UpdateStatus(match.Status);
+
             Instantiate(_lobbyRoom, _lobbyRoomParent)
-                .Setup(new LobbyRoomInfo(match.ID, match.HostName, match.Mode, match.Map, match.MaxPlayer))
+                .Setup(lobbyInfo)
                 .OnButtonClick((id) => _selectRoomId = id)
                 .Show();
         }
