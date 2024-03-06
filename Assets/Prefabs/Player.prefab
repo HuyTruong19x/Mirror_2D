@@ -309,6 +309,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  _physicRadius: 3
+  _playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!114 &6841728930540758539
 MonoBehaviour:
   m_ObjectHideFlags: 0

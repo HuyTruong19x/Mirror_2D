@@ -29,10 +29,16 @@ public class GameController : SingletonBehavior<GameController>
         _currentState = state;
         OnStateChange();
     }
+
     private void OnStateChange()
     {
         _waitingMap.SetActive(_currentState == GameState.WAITING);
         _gameMap.SetActive(_currentState != GameState.WAITING);
+    }
+
+    public void ChangeHost(bool isHost)
+    {
+        _uiGame.SetHost(isHost);
     }
 }
 

@@ -4,14 +4,7 @@ using UnityEngine;
 
 public class PlayerController : NetworkBehaviour
 {
-    public Guid GameId;
     private Rigidbody2D _rid2D;
-
-    [ServerCallback]
-    private void OnDestroy()
-    {
-        Disconnected(connectionToClient);
-    }
 
     private void Start()
     {
@@ -27,17 +20,5 @@ public class PlayerController : NetworkBehaviour
             var y = Input.GetAxisRaw("Vertical");
             _rid2D.velocity = new Vector2(x, y) * 5;
         }
-    }
-
-    [ClientRpc]
-    public void StartGame(Vector3 position)
-    {
-        transform.position = position;
-    }
-
-    [ServerCallback]
-    public void Disconnected(NetworkConnectionToClient conn)
-    {
-        //MatchManager.Instance.RemovePlayerFromMatch(GameId, this);
     }
 }

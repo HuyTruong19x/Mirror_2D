@@ -19,7 +19,11 @@ public class Player : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         LocalPlayer = this;
+    }
 
+    private void Start()
+    {
+        _role = GetComponent<PlayerRole>();
     }
 
     [ServerCallback]
@@ -36,7 +40,7 @@ public class Player : NetworkBehaviour
 
     private void OnHostChanged(bool _, bool isHost)
     {
-
+        GameController.Instance.ChangeHost(isHost);
     }
 
     private void OnGameStateChanged(GameState _, GameState state)

@@ -28,7 +28,8 @@ public class PlayerRole : NetworkBehaviour
     {
         if(isLocalPlayer)
         {
-            _currentView.SetInteract(true);
+            _currentView ??= Instantiate(_uiPlayer);
+            _currentView.SetActionInteract(true);
             _target = role;
         }
     }
@@ -37,7 +38,7 @@ public class PlayerRole : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            _currentView?.SetInteract(false);
+            _currentView?.SetActionInteract(false);
         }
     }
 }

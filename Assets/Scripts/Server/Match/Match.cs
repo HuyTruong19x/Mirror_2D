@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class Match : NetworkBehaviour
 {
+    public bool IsPlaying => _isPlaying;
     public bool IsEmpty => _Player.Count == 0;
     public MatchInfo Info => _info;
 
@@ -15,6 +16,8 @@ public class Match : NetworkBehaviour
 
     [SerializeField]
     private Map _map;
+
+    private bool _isPlaying = false;
 
     public void Initialize(NetworkConnectionToClient conn, MatchInfo info)
     {
@@ -68,10 +71,12 @@ public class Match : NetworkBehaviour
 
     public void StartMatch()
     {
+        _isPlaying = true;
         _map.SetupRole(_Player.Count);
 
         foreach (var player in _Player)
         {
+            player.Value.GameState = GameState.PLAYING;
             player.Value.SetRole(_map.GetRandomRole());
             player.Value.StartGame();
             player.Value.MoveToPosition(_map.GetStartPosition());
