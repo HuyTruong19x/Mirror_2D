@@ -7,21 +7,22 @@ public class Match : NetworkBehaviour
 {
     public List<Player> Players => _players;
     public List<NetworkConnectionToClient> Connections => _connections;
+    public MatchInfo Info => _info;
 
     [SerializeField]
-    [SyncVar] private MatchInfo _Info;
+    [SyncVar] private MatchInfo _info;
     private List<Player> _players = new List<Player>();
     private List<NetworkConnectionToClient> _connections = new();
 
     public void Initialize(NetworkConnectionToClient conn, MatchInfo info)
     {
-        _Info = info;
+        _info = info;
         _connections.Add(conn);
     }
 
     public bool JoinMatch(NetworkConnectionToClient conn)
     {
-        if(_connections.Count >= _Info.MaxPlayer)
+        if(_connections.Count >= _info.MaxPlayer)
         {
             return false;
         }

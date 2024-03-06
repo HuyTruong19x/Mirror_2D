@@ -15,12 +15,12 @@ public class UILobby : MonoBehaviour
 
     private void OnEnable()
     {
-        EventDispatcher.Subscribe(ActionChannel.ROOM, Handle);
+        EventDispatcher.Subscribe(MessageCode.MATCH, Handle);
     }
 
     private void OnDisable()
     {
-        EventDispatcher.Subscribe(ActionChannel.ROOM, Handle);
+        EventDispatcher.Unsubscribe(MessageCode.MATCH, Handle);
     }
 
     private void Start()
@@ -30,33 +30,39 @@ public class UILobby : MonoBehaviour
 
     private void Handle(NetworkMessage data)
     {
-        var roomData = (ClientRoomMessage)data;
-        Debug.Log($"Create room id {roomData.RoomID}");
+        var roomData = (ClientMatchMessage)data;
+        Debug.Log($"Create room id {roomData.MatchID}");
         switch (roomData.Operation)
         {
-            case ClientRoomOperation.CREATED:
-            case ClientRoomOperation.JOINED: LoadGameScene(roomData.RoomID); break;
-            case ClientRoomOperation.LIST: UpdateRoomList(roomData.Rooms); break;
+            case MatchOperation.CREATE:
+            case MatchOperation.JOIN: LoadGameScene(roomData.MatchID, roomData.Result); break;
+            case MatchOperation.LIST: UpdateRoomList(roomData.MatchInfos); break;
         }
     }
 
-    private void LoadGameScene(string roomId)
+    private void LoadGameScene(string roomId, Result result)
     {
-        GameNetworkManager.singleton.Client.RoomID = roomId;
-        this.gameObject.SetActive(false);
-        SceneManager.LoadScene(2);
+        if(result == Result.SUCCESS)
+        {
+            GameNetworkManager.singleton.Client.MatchID = roomId;
+            this.gameObject.SetActive(false);
+            SceneManager.LoadScene(2);
+        }
     }
 
-    private void UpdateRoomList(List<LobbyRoomInfo> infos)
+    private void UpdateRoomList(List<MatchInfo> infos)
     {
         for (int i = 1; i < _lobbyRoomParent.childCount; i++)
         {
             Destroy(_lobbyRoomParent.GetChild(i).gameObject);
         }
 
-        foreach (LobbyRoomInfo roomInfo in infos)
+        foreach (var match in infos)
         {
-            Instantiate(_lobbyRoom, _lobbyRoomParent).Setup(roomInfo).OnButtonClick((id) => _selectRoomId = id).Show();
+            Instantiate(_lobbyRoom, _lobbyRoomParent)
+                .Setup(new LobbyRoomInfo(match.ID, match.HostName, match.Mode, match.Map, match.MaxPlayer))
+                .OnButtonClick((id) => _selectRoomId = id)
+                .Show();
         }
     }   
 

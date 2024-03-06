@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class ServerProcessor
 {
-    protected static readonly Dictionary<ActionChannel, IMessageHandler> _packetHandlers = new();
+    protected static readonly Dictionary<MessageCode, IMessageHandler> _packetHandlers = new();
 
     public ServerProcessor()
     {
@@ -15,7 +15,7 @@ public class ServerProcessor
         Debug.Log($"PacketProcessor: Loaded " + num + $" handlers from {Assembly.GetExecutingAssembly()} Assembly!");
     }
 
-    public static void RegisterPacketHandler(ActionChannel packetCode, IMessageHandler handler)
+    public static void RegisterPacketHandler(MessageCode packetCode, IMessageHandler handler)
     {
         _packetHandlers.Add(packetCode, handler);
     }
@@ -40,7 +40,7 @@ public class ServerProcessor
         return num;
     }
 
-    public void Handle(NetworkConnectionToClient conn, ActionChannel channel, NetworkMessage message)
+    public void Handle(NetworkConnectionToClient conn, MessageCode channel, NetworkMessage message)
     {
         if (_packetHandlers.ContainsKey(channel))
         {

@@ -15,19 +15,19 @@ public class UIGame : MonoBehaviour
 
     public void StartGame()
     {
-        NetworkClient.Send(new GameMessage()
+        NetworkClient.Send(new ServerMatchMessage()
         {
-            Operation = 2,
-            RoomID = GameNetworkManager.singleton.Client.RoomID
+            Operation = MatchOperation.START_GAME,
+            MatchID = GameNetworkManager.singleton.Client.MatchID
         });
     }
 
     public void ExitGame()
     {
-        NetworkClient.Send(new GameMessage()
+        NetworkClient.Send(new ServerMatchMessage()
         {
-            Operation = 3,
-            RoomID = GameNetworkManager.singleton.Client.RoomID
+            Operation = MatchOperation.LEAVE,
+            MatchID = GameNetworkManager.singleton.Client.MatchID
         });
         SceneManager.LoadScene(1);
     }

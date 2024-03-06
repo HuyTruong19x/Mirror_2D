@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class EventDispatcher : MonoBehaviour
 {
-    private static Dictionary<ActionChannel, Action<NetworkMessage>> _events = new Dictionary<ActionChannel, Action<NetworkMessage>>();
+    private static Dictionary<MessageCode, Action<NetworkMessage>> _events = new Dictionary<MessageCode, Action<NetworkMessage>>();
 
-    public static void Subscribe(ActionChannel code, Action<NetworkMessage> callback)
+    public static void Subscribe(MessageCode code, Action<NetworkMessage> callback)
     {
         if (_events.ContainsKey(code))
         {
@@ -19,7 +19,7 @@ public class EventDispatcher : MonoBehaviour
         }
     }
 
-    public static void Unsubscribe(ActionChannel code, Action<NetworkMessage> callback)
+    public static void Unsubscribe(MessageCode code, Action<NetworkMessage> callback)
     {
         if (_events.ContainsKey(code))
         {
@@ -27,7 +27,7 @@ public class EventDispatcher : MonoBehaviour
         }
     }
 
-    public static void Dispatch(ActionChannel code, NetworkMessage result)
+    public static void Dispatch(MessageCode code, NetworkMessage result)
     {
         if (_events.ContainsKey(code))
         {

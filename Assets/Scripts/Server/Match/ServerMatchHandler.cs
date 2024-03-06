@@ -1,10 +1,8 @@
 using Mirror;
-using Mirror.Examples.MultipleMatch;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[MessageAttribute(ActionChannel.MATCH)]
+[MessageAttribute(MessageCode.MATCH)]
 public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
 {
     private readonly Dictionary<string, GameObject> _matchs = new();
@@ -16,6 +14,8 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
         {
             case MatchOperation.CREATE: CreateMatch(conn, message); break;
             case MatchOperation.JOIN: JoinMatch(conn, message); break;
+            case MatchOperation.LEAVE: LeaveMatch(conn, message); break;
+            case MatchOperation.LIST: ListMatch(conn); break;
             case MatchOperation.LOADED_GAME_SCENE: CreateMatchObject(conn, message.MatchID); break;
         }
     }
@@ -24,19 +24,20 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
     {
         var matchInfo = message.MatchInfo;
         var isSuccess = MatchManager.Instance.CreateMatch(conn, ref matchInfo);
-        conn.Send(new ClientRoomMessage()
+        conn.Send(new ClientMatchMessage()
         {
-            Operation = isSuccess ? ClientRoomOperation.CREATED : ClientRoomOperation.CREATE_FAIL,
-            RoomID = matchInfo.ID,
-            RoomName = matchInfo.HostName
+            Operation = MatchOperation.CREATE,
+            Result = isSuccess ? Result.SUCCESS : Result.FAILED,
+            MatchID = matchInfo.ID
         });
     }
 
     private void JoinMatch(NetworkConnectionToClient conn, ServerMatchMessage message)
     {
-        conn.Send(new ClientRoomMessage()
+        conn.Send(new ClientMatchMessage()
         {
-            Operation = MatchManager.Instance.JoinMatch(conn, message.MatchID) ? ClientRoomOperation.JOINED : ClientRoomOperation.JOIN_FAIL,
+            Operation = MatchOperation.JOIN,
+            Result = MatchManager.Instance.JoinMatch(conn, message.MatchID) ? Result.SUCCESS : Result.FAILED
         });
     }
 
@@ -69,10 +70,33 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
             else
             {
                 GameObject player = GameObject.Instantiate(NetworkManager.singleton.playerPrefab);
-                player.GetComponent<NetworkMatch>().matchId = matchID.ToGuid();
-                NetworkServer.AddPlayerForConnection(conn, player);
-                _players.Add(item, player);
+                if(MatchManager.Instance.AddPlayerToMatch(matchID, player.GetComponent<Player>()))
+                {
+                    player.GetComponent<NetworkMatch>().matchId = matchID.ToGuid();
+                    NetworkServer.AddPlayerForConnection(conn, player);
+                    _players.Add(item, player);
+                }
+                else
+                {
+                    GameObject.Destroy(player);
+                }
             }
         }
+    }
+
+    private void LeaveMatch(NetworkConnectionToClient conn, ServerMatchMessage message)
+    {
+        MatchManager.Instance.LeaveMatch(conn, message.MatchID);
+    }
+
+    private void ListMatch(NetworkConnectionToClient conn)
+    {
+        var matchs = MatchManager.Instance.GetMatchs();
+
+        conn.Send(new ClientMatchMessage()
+        {
+            Operation = MatchOperation.LIST,
+            MatchInfos = matchs
+        });
     }
 }

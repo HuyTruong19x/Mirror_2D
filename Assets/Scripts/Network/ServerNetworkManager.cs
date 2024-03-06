@@ -19,8 +19,6 @@ public class ServerNetworkManager : MonoBehaviour
     [ServerCallback]
     public void OnStartServer()
     {
-        NetworkServer.RegisterHandler<ServerRoomMessage>(OnRoomMessage);
-        NetworkServer.RegisterHandler<GameMessage>(OnGameMessage);
         NetworkServer.RegisterHandler<ServerMatchMessage>(OnServerMatchMessageReceive);
         _processor = new ServerProcessor();
     }
@@ -30,24 +28,14 @@ public class ServerNetworkManager : MonoBehaviour
 
     }
 
-    #region callback
-
-    private void OnRoomMessage(NetworkConnectionToClient conn, ServerRoomMessage message)
-    {
-        ProcessMessage(conn, ActionChannel.ROOM, message);
-    }
-
-    private void OnGameMessage(NetworkConnectionToClient conn, GameMessage message)
-    {
-        ProcessMessage(conn, ActionChannel.GAME, message);
-    }    
+    #region callback   
 
     private void OnServerMatchMessageReceive(NetworkConnectionToClient conn, ServerMatchMessage message)
     {
-        ProcessMessage(conn, ActionChannel.MATCH, message);
+        ProcessMessage(conn, MessageCode.MATCH, message);
     }
 
-    private void ProcessMessage(NetworkConnectionToClient conn, ActionChannel channel, NetworkMessage message)
+    private void ProcessMessage(NetworkConnectionToClient conn, MessageCode channel, NetworkMessage message)
     {
         if (_processor == null)
         {

@@ -1,9 +1,10 @@
 using Mirror;
+using Mirror.Examples.MultipleMatch;
 using UnityEngine;
 
 public class ClientNetworkManager : MonoBehaviour
 {
-    public string RoomID;
+    public string MatchID;
 
     public void OnClientConnect()
     {
@@ -16,14 +17,12 @@ public class ClientNetworkManager : MonoBehaviour
 
     public void OnStartClient()
     {
-        NetworkClient.RegisterHandler<ClientRoomMessage>(OnClientMessage);
-        NetworkClient.RegisterHandler<WaitingRoomMessage>(OnWaitingGameMessage);
+        NetworkClient.RegisterHandler<ClientMatchMessage>(OnClientMessage);
     }
 
     public void OnStopClient()
     {
-        NetworkClient.UnregisterHandler<ClientRoomMessage>();
-        NetworkClient.UnregisterHandler<WaitingRoomMessage>();
+        NetworkClient.UnregisterHandler<ClientMatchMessage>();
     }
 
     [ClientCallback]
@@ -51,9 +50,9 @@ public class ClientNetworkManager : MonoBehaviour
     [ClientCallback]
     public void RequestRoomList()
     {
-        NetworkClient.Send(new ServerRoomMessage()
+        NetworkClient.Send(new ServerMatchMessage()
         {
-            Operation = ServerRoomOperation.LIST,
+            Operation = MatchOperation.LIST,
         });
     }
 
@@ -73,13 +72,8 @@ public class ClientNetworkManager : MonoBehaviour
         });
     }
 
-    private void OnClientMessage(ClientRoomMessage message)
+    private void OnClientMessage(ClientMatchMessage message)
     {
-        EventDispatcher.Dispatch(ActionChannel.ROOM, message);
-    }
-
-    private void OnWaitingGameMessage(WaitingRoomMessage message)
-    {
-        EventDispatcher.Dispatch(ActionChannel.WAITING_ROOM, message);
+        EventDispatcher.Dispatch(MessageCode.MATCH, message);
     }
 }

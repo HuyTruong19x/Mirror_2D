@@ -14,38 +14,15 @@ public class GameController : MonoBehaviour
     [SerializeField]
     private GameObject _gameMap;
 
-    private void OnEnable()
-    {
-        EventDispatcher.Subscribe(ActionChannel.WAITING_ROOM, OnWaitingMessage);
-    }
-
     void Start()
     {
-        Debug.Log("Request room id " + GameNetworkManager.singleton.Client.RoomID);
+        Debug.Log("Request match id " + GameNetworkManager.singleton.Client.MatchID);
         NetworkClient.Send(new ServerMatchMessage()
         {
             Operation = MatchOperation.LOADED_GAME_SCENE,
-            MatchID = GameNetworkManager.singleton.Client.RoomID
+            MatchID = GameNetworkManager.singleton.Client.MatchID
         });
-    }
-
-
-    private void OnWaitingMessage(NetworkMessage message)
-    {
-        var gm = (WaitingRoomMessage)message;
-        _uiGame.SetHost(gm.IsHost);
-        if(gm.State != GameState.NONE)
-        {
-            _currentState = gm.State;
-        }
-        OnStateChange();
-    }    
-
-    private void OnStateChange()
-    {
-        _waitingMap.SetActive(_currentState == GameState.WAITING);
-        _gameMap.SetActive(_currentState != GameState.WAITING);
-    }    
+    } 
 }
 
 public enum GameState

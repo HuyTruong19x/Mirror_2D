@@ -2,6 +2,7 @@ using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class MatchManager : Singleton<MatchManager>
@@ -46,6 +47,11 @@ public class MatchManager : Singleton<MatchManager>
         return null;
     }
 
+    public List<MatchInfo> GetMatchs()
+    {
+        return _matchs.Values.ToList().Select(x => x.Info).ToList();
+    }
+
     public GameObject GetMatchObject(string matchID)
     {
         if (_matchs.ContainsKey(matchID))
@@ -56,13 +62,17 @@ public class MatchManager : Singleton<MatchManager>
         return null;
     }
 
-    public void AddPlayerToMatch(string matchId, Player player)
+    public bool AddPlayerToMatch(string matchId, Player player)
     {
-        if (_matchs.ContainsKey(matchId))
+        if (_matchs.ContainsKey(matchId) && !_matchs[matchId].Players.Contains(player))
         {
             player.MatchID = matchId;
+            player.IsHost = _matchs[matchId].Players.Count == 0;
             _matchs[matchId].AddPlayer(player);
+            return true;
         }
+
+        return false;
     }
 
     public void RemovePlayerFromMatch(Player player)
