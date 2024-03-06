@@ -38,7 +38,8 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
         conn.Send(new ClientMatchMessage()
         {
             Operation = MatchOperation.JOIN,
-            Result = MatchManager.Instance.JoinMatch(conn, message.MatchID) ? Result.SUCCESS : Result.FAILED
+            Result = MatchManager.Instance.JoinMatch(conn, message.MatchID) ? Result.SUCCESS : Result.FAILED,
+            MatchID = message.MatchID
         });
     }
 
