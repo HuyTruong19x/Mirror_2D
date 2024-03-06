@@ -31,7 +31,7 @@ public class UILobby : MonoBehaviour
     private void Handle(NetworkMessage data)
     {
         var roomData = (ClientMatchMessage)data;
-        Debug.Log($"Create room id {roomData.MatchID}");
+        Debug.Log($"Room id {roomData.MatchID}");
         switch (roomData.Operation)
         {
             case MatchOperation.CREATE:

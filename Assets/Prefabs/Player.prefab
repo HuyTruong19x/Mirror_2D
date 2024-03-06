@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 6841728930540758539}
   - component: {fileID: -1784903956088051286}
   - component: {fileID: -5617717059102685040}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -359,3 +359,5 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   MatchID: 
+  IsHost: 0
+  GameState: 0

@@ -33,19 +33,22 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
             Result = isSuccess ? Result.SUCCESS : Result.FAILED,
             MatchID = matchInfo.ID
         });
+
+        _matchs.Add(matchInfo.ID, null);
     }
 
     private void QuickJoinMatch(NetworkConnectionToClient conn, ServerMatchMessage message)
     {
         foreach(var match in _matchs.ToArray())
         {
-            if(MatchManager.Instance.JoinMatch(conn, match.Key))
+            Match mat = MatchManager.Instance.JoinMatch(conn, match.Key);
+            if (mat != null)
             {
                 conn.Send(new ClientMatchMessage()
                 {
                     Operation = MatchOperation.JOIN,
                     Result = Result.SUCCESS,
-                    MatchID = message.MatchID
+                    MatchID = match.Key
                 });
                 return;
             }
@@ -70,12 +73,13 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
 
     private void CreateMatchObject(NetworkConnectionToClient conn, string matchID)
     {
-        if (!_matchs.ContainsKey(matchID))
+        if (_matchs[matchID] == null)
         {
             var go = MatchManager.Instance.GetMatchObject(matchID);
             if (go != null)
             {
                 NetworkServer.Spawn(go);
+                _matchs[matchID] = go;
             }
             else
             {
