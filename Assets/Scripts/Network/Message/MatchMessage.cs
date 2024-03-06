@@ -22,10 +22,11 @@ public enum MatchOperation
     NONE = 0,
     CREATE = 1,
     JOIN = 2,
-    LEAVE = 3,
-    LIST = 4,
-    LOADED_GAME_SCENE = 5,
-    START_GAME = 6,
+    QUICK_JOIN = 3,
+    LEAVE = 4,
+    LIST = 5,
+    LOADED_GAME_SCENE = 6,
+    START_GAME = 7,
 }
 
 public enum Result

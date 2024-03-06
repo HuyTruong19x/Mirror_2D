@@ -72,6 +72,21 @@ public class ClientNetworkManager : MonoBehaviour
         });
     }
 
+    [ClientCallback]
+    public void RequestQuickJoin()
+    {
+        var playerInfo = new PlayerInfo()
+        {
+            ID = "ID_" + Random.Range(0, 100000),
+            Name = "User_" + Random.Range(0, 100000)
+        };
+        NetworkClient.Send(new ServerMatchMessage()
+        {
+            Operation = MatchOperation.QUICK_JOIN,
+            PlayerInfo = playerInfo// TODO get player info from data
+        });
+    }
+
     private void OnClientMessage(ClientMatchMessage message)
     {
         EventDispatcher.Dispatch(MessageCode.MATCH, message);

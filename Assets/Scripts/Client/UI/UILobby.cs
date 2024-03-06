@@ -86,5 +86,10 @@ public class UILobby : MonoBehaviour
         _networkManager.RequestJoinRoom(_selectRoomId);
     }
 
+    public void QuickJoin()
+    {
+        _networkManager.RequestQuickJoin();
+    }
+
     #endregion
 }

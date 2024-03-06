@@ -1,5 +1,6 @@
 using Mirror;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [MessageAttribute(MessageCode.MATCH)]
@@ -14,6 +15,7 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
         {
             case MatchOperation.CREATE: CreateMatch(conn, message); break;
             case MatchOperation.JOIN: JoinMatch(conn, message); break;
+            case MatchOperation.QUICK_JOIN: QuickJoinMatch(conn, message); break;
             case MatchOperation.LEAVE: LeaveMatch(conn, message); break;
             case MatchOperation.LIST: ListMatch(conn); break;
             case MatchOperation.LOADED_GAME_SCENE: CreateMatchObject(conn, message.MatchID); break;
@@ -30,6 +32,29 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
             Operation = MatchOperation.CREATE,
             Result = isSuccess ? Result.SUCCESS : Result.FAILED,
             MatchID = matchInfo.ID
+        });
+    }
+
+    private void QuickJoinMatch(NetworkConnectionToClient conn, ServerMatchMessage message)
+    {
+        foreach(var match in _matchs.ToArray())
+        {
+            if(MatchManager.Instance.JoinMatch(conn, match.Key))
+            {
+                conn.Send(new ClientMatchMessage()
+                {
+                    Operation = MatchOperation.JOIN,
+                    Result = Result.SUCCESS,
+                    MatchID = message.MatchID
+                });
+                return;
+            }
+        }
+
+        conn.Send(new ClientMatchMessage()
+        {
+            Operation = MatchOperation.JOIN,
+            Result = Result.FAILED
         });
     }
 
