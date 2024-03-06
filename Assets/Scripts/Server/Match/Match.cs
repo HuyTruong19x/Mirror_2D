@@ -41,7 +41,7 @@ public class Match : NetworkBehaviour
         if (_Player.ContainsKey(conn))
         {
             player.MatchID = _info.ID;
-            player.IsHost = _Player.Count == 0;
+            player.IsHost = _Player.Where(x => x.Value != null).ToList().Count == 0;
             player.GameState = GameState.WAITING;
             _Player[conn] = player;
             UpdateMatchStatus();
@@ -64,7 +64,13 @@ public class Match : NetworkBehaviour
     {
         if (_Player.ContainsKey(conn))
         {
+            var isHost = _Player[conn].IsHost;
             _Player.Remove(conn);
+
+            if(_Player.Count > 0)
+            {
+                _Player.ElementAt(0).Value.IsHost = isHost;
+            }
             UpdateMatchStatus();
         }
     }

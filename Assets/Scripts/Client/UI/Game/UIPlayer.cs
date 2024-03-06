@@ -7,7 +7,7 @@ public class UIPlayer : MonoBehaviour
 {
     [SerializeField]
     private Button _actionButton;
-    private Action OnClick;
+    public Action OnClick;
 
     [SerializeField]
     private Button _useButton;

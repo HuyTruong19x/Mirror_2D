@@ -10,6 +10,10 @@ public class PlayerRole : NetworkBehaviour
 
     public Role Role;
 
+    private void Awake()
+    {
+    }
+
     public void Execute()
     {
         Role.Action(_target.Role);
@@ -19,7 +23,9 @@ public class PlayerRole : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
+            Role = newRole;
             _currentView ??= Instantiate(_uiPlayer);
+            _currentView.OnClick = Execute;
             newRole.UpdateUI(_currentView);
         }
     }
@@ -39,6 +45,14 @@ public class PlayerRole : NetworkBehaviour
         if (isLocalPlayer)
         {
             _currentView?.SetActionInteract(false);
+        }
+    }
+
+    public void SetQuest()
+    {
+        if (isLocalPlayer)
+        {
+            _currentView?.SetUseInteract(true);
         }
     }
 }

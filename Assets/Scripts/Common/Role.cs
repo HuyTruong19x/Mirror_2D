@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 [Serializable]
 public class Role
@@ -7,7 +8,7 @@ public class Role
 
     public virtual void Action(Role role)
     {
-
+        Debug.Log("my Role is");
     }
 
     public virtual void UpdateUI(UIPlayer ui)

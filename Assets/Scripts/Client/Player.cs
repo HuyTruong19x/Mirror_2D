@@ -2,6 +2,7 @@ using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class Player : NetworkBehaviour
@@ -19,6 +20,7 @@ public class Player : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         LocalPlayer = this;
+        GameController.Instance.ChangeHost(IsHost);
     }
 
     private void Start()

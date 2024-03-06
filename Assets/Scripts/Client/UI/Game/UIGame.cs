@@ -7,10 +7,17 @@ public class UIGame : MonoBehaviour
 {
     [SerializeField]
     private Button _startGameButton;
+    [SerializeField]
+    private InputField _matchId;
 
     public void SetHost(bool isHost)
     {
         _startGameButton.gameObject.SetActive(isHost);
+    }
+
+    public void SetMatchID(string matchId)
+    {
+        _matchId.text = matchId;
     }
 
     public void StartGame()

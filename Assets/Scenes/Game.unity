@@ -136,12 +136,12 @@ GameObject:
   - component: {fileID: 34859631}
   - component: {fileID: 34859630}
   m_Layer: 5
-  m_Name: Button (Legacy)
+  m_Name: StartGame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &34859629
 RectTransform:
   m_ObjectHideFlags: 0
@@ -372,6 +372,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _startGameButton: {fileID: 34859630}
+  _matchId: {fileID: 520241068}
 --- !u!1 &286192117
 GameObject:
   m_ObjectHideFlags: 0
@@ -1708,6 +1709,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46ad50b680009224795a5545b80d8847, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isPersistent: 0
   _uiGame: {fileID: 134334544}
   _waitingMap: {fileID: 809202884}
   _gameMap: {fileID: 487553628}

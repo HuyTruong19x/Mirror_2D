@@ -22,6 +22,8 @@ public class GameController : SingletonBehavior<GameController>
             Operation = MatchOperation.LOADED_GAME_SCENE,
             MatchID = GameNetworkManager.singleton.Client.MatchID
         });
+
+        _uiGame.SetMatchID(GameNetworkManager.singleton.Client.MatchID);
     } 
 
     public void ChangeState(GameState state)

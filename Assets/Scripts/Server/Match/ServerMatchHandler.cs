@@ -125,6 +125,7 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
 
     private void LeaveMatch(NetworkConnectionToClient conn, ServerMatchMessage message)
     {
+        GameObject.Destroy(_players[conn]);
         _players.Remove(conn);
         MatchManager.Instance.LeaveMatch(conn, message.MatchID);
     }

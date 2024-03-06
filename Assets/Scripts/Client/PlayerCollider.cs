@@ -9,6 +9,7 @@ public class PlayerCollider : NetworkBehaviour
     private LayerMask _playerLayer;
 
     private PlayerRole _playerRole;
+    private Player _player;
 
     [SyncVar(hook = nameof(OnNearestPlayerChanged))]
     private PlayerRole _nearestPlayer;
@@ -17,11 +18,17 @@ public class PlayerCollider : NetworkBehaviour
     private void Awake()
     {
         _playerRole = GetComponent<PlayerRole>();
+        _player = GetComponent<Player>();
     }
 
     [ServerCallback]
     private void Update()
     {
+        if (_player.GameState != GameState.PLAYING)
+        {
+            return;
+        }
+
         var colliders = Physics2D.OverlapCircleAll(transform.position, _physicRadius, _playerLayer);
         if (colliders.Length > 0)
         {
@@ -44,42 +51,18 @@ public class PlayerCollider : NetworkBehaviour
     }
 
     [ServerCallback]
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if(collision.gameObject.CompareTag("Quest"))
         {
-            Debug.Log("Has collider action");
+            
         }
-    }
-
-    [ServerCallback]
-    private void OnTriggerExit2D(Collider2D collision)
-    {
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, _physicRadius);
-    }
-
-    [ClientRpc]
-    private void ShowUI(PlayerRole playerRole)
-    {
-        if (isLocalPlayer)
-        {
-            _playerRole.Show(playerRole);
-        }
-    }
-
-    [ClientRpc]
-    private void HideUI()
-    {
-        if (isLocalPlayer)
-        {
-            Debug.Log("hide ui");
-            _playerRole.Hide();
-        }
     }
 
     [ClientCallback]
