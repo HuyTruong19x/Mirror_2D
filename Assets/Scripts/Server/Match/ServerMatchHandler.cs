@@ -17,6 +17,7 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
             case MatchOperation.LEAVE: LeaveMatch(conn, message); break;
             case MatchOperation.LIST: ListMatch(conn); break;
             case MatchOperation.LOADED_GAME_SCENE: CreateMatchObject(conn, message.MatchID); break;
+            case MatchOperation.START_GAME: StartMatch(conn, message.MatchID); break;
         }
     }
 
@@ -45,7 +46,15 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
     {
         if (!_matchs.ContainsKey(matchID))
         {
-            NetworkServer.Spawn(MatchManager.Instance.GetMatchObject(matchID));
+            var go = MatchManager.Instance.GetMatchObject(matchID);
+            if(go != null)
+            {
+                NetworkServer.Spawn(go);
+            }    
+            else
+            {
+                Debug.Log("Could not spawn match object due to not found");
+            }    
         }
 
         SpawnPlayer(conn, matchID);
@@ -70,7 +79,7 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
             else
             {
                 GameObject player = GameObject.Instantiate(NetworkManager.singleton.playerPrefab);
-                if(MatchManager.Instance.AddPlayerToMatch(matchID, player.GetComponent<Player>()))
+                if (MatchManager.Instance.AddPlayerToMatch(matchID, player.GetComponent<Player>()))
                 {
                     player.GetComponent<NetworkMatch>().matchId = matchID.ToGuid();
                     NetworkServer.AddPlayerForConnection(conn, player);
@@ -98,5 +107,10 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
             Operation = MatchOperation.LIST,
             MatchInfos = matchs
         });
+    }
+
+    private void StartMatch(NetworkConnectionToClient conn, string matchID)
+    {
+        MatchManager.Instance.StartMatch(conn, matchID);
     }
 }

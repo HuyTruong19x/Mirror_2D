@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using System.Security.Cryptography;
 
-public static class StringExtension
+public static class StringGuidExtension
 {
     public static Guid ToGuid(this string id)
 

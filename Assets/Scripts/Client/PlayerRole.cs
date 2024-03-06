@@ -8,14 +8,14 @@ public class PlayerRole : NetworkBehaviour
     private UIPlayer _currentView;
     public PlayerRole _target;
 
-    [SyncVar(hook = nameof(UpdateGameUI))] public Role Role;
+    public Role Role;
 
     public void Execute()
     {
         Role.Action(_target.Role);
     }
 
-    public void UpdateGameUI(Role oldRole, Role newRole)
+    public void UpdateRole(Role newRole)
     {
         if (isLocalPlayer)
         {

@@ -15,14 +15,12 @@ public class PlayerCollider : NetworkBehaviour
         if(collision.CompareTag("Player"))
         {
             Debug.Log("Has collider action");
-            ShowUI(collision.GetComponent<PlayerRole>());
         }    
     }
 
     [ServerCallback]
     private void OnTriggerExit2D(Collider2D collision)
     {
-        HideUI();
     }
 
     [ClientRpc]

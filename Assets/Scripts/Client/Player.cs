@@ -7,13 +7,19 @@ using UnityEngine;
 public class Player : NetworkBehaviour
 {
     public static Player LocalPlayer;
+
+    public PlayerInfo PlayerInfo;
+
     [SyncVar] public string MatchID = string.Empty;
     [SyncVar(hook = nameof(OnHostChanged))] public bool IsHost = false;
-    public PlayerInfo PlayerInfo;
+    [SyncVar(hook = nameof(OnGameStateChanged))] public GameState GameState;
+
+    private PlayerRole _role;
 
     public override void OnStartLocalPlayer()
     {
         LocalPlayer = this;
+
     }
 
     [ServerCallback]
@@ -31,5 +37,28 @@ public class Player : NetworkBehaviour
     private void OnHostChanged(bool _, bool isHost)
     {
 
+    }
+
+    private void OnGameStateChanged(GameState _, GameState state)
+    {
+        GameController.Instance.ChangeState(state);
+    }
+
+    [ClientRpc]
+    public void StartGame()
+    {
+
+    }
+
+    [ClientRpc]
+    public void SetRole(Role role)
+    {
+        _role.UpdateRole(role);
+    }
+
+    [ClientRpc]
+    public void MoveToPosition(Vector3 pos)
+    {
+        transform.position = pos;
     }
 }

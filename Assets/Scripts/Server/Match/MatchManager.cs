@@ -67,7 +67,6 @@ public class MatchManager : Singleton<MatchManager>
         if (_matchs.ContainsKey(matchId) && !_matchs[matchId].Players.Contains(player))
         {
             player.MatchID = matchId;
-            player.IsHost = _matchs[matchId].Players.Count == 0;
             _matchs[matchId].AddPlayer(player);
             return true;
         }
@@ -82,6 +81,7 @@ public class MatchManager : Singleton<MatchManager>
             _matchs[player.MatchID].RemovePlayer(player);
             if (_matchs[player.MatchID].Players.Count <= 0)
             {
+                _matchs.Remove(player.MatchID);
                 GameObject.Destroy(_matchs[player.MatchID].gameObject);
             }
         }
@@ -96,6 +96,14 @@ public class MatchManager : Singleton<MatchManager>
             {
                 GameObject.Destroy(_matchs[matchID].gameObject);
             }
+        }
+    }
+
+    public void StartMatch(NetworkConnectionToClient conn, string matchID)
+    {
+        if (_matchs.ContainsKey(matchID))
+        {
+            _matchs[matchID].StartMatch();
         }
     }
 

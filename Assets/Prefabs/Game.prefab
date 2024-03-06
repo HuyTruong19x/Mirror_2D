@@ -82,10 +82,11 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  _Info:
+  _info:
     ID: 
     HostName: 
     Mode: 
     Map: 
     Status: 
     MaxPlayer: 0
+  _map: {fileID: 192014279240325972, guid: d976d2c118124b54fa25f54a9e3ca232, type: 3}

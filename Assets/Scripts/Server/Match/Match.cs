@@ -11,8 +11,12 @@ public class Match : NetworkBehaviour
 
     [SerializeField]
     [SyncVar] private MatchInfo _info;
+
     private List<Player> _players = new List<Player>();
     private List<NetworkConnectionToClient> _connections = new();
+
+    [SerializeField]
+    private Map _map;
 
     public void Initialize(NetworkConnectionToClient conn, MatchInfo info)
     {
@@ -33,6 +37,8 @@ public class Match : NetworkBehaviour
 
     public void AddPlayer(Player player)
     {
+        player.IsHost = _players.Count == 0;
+        player.GameState = GameState.WAITING;
         _players.Add(player);
     }
 
@@ -46,6 +52,18 @@ public class Match : NetworkBehaviour
         if (_connections.Contains(conn))
         {
             _connections.Remove(conn);
+        }
+    }
+
+    public void StartMatch()
+    {
+        _map.SetupRole(Players.Count);
+
+        foreach(Player player in _players)
+        {
+            player.SetRole(_map.GetRandomRole());
+            player.StartGame();
+            player.MoveToPosition(_map.GetStartPosition());
         }
     }
 }

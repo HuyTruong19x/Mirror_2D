@@ -2,7 +2,7 @@ using Mirror;
 using System.Collections;
 using UnityEngine;
 
-public class GameController : MonoBehaviour
+public class GameController : SingletonBehavior<GameController>
 {
     public GameState State => _currentState;
     private GameState _currentState;
@@ -23,6 +23,17 @@ public class GameController : MonoBehaviour
             MatchID = GameNetworkManager.singleton.Client.MatchID
         });
     } 
+
+    public void ChangeState(GameState state)
+    {
+        _currentState = state;
+        OnStateChange();
+    }
+    private void OnStateChange()
+    {
+        _waitingMap.SetActive(_currentState == GameState.WAITING);
+        _gameMap.SetActive(_currentState != GameState.WAITING);
+    }
 }
 
 public enum GameState
