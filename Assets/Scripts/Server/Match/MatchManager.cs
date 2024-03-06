@@ -77,6 +77,18 @@ public class MatchManager : Singleton<MatchManager>
         }
     }
 
+    public void LeaveMatch(NetworkConnectionToClient conn, string matchID)
+    {
+        if (_matchs.ContainsKey(matchID))
+        {
+            _matchs[matchID].LeaveMatch(conn);
+            if (_matchs[matchID].Connections.Count <= 0)
+            {
+                GameObject.Destroy(_matchs[matchID].gameObject);
+            }
+        }
+    }
+
     public static string GetRandomID()
     {
         string _id = string.Empty;

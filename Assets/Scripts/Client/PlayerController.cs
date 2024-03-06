@@ -38,7 +38,6 @@ public class PlayerController : NetworkBehaviour
     [ServerCallback]
     public void Disconnected(NetworkConnectionToClient conn)
     {
-        RoomManager.Instance.LeaveRoom(conn);
-        GameManager.Instance.RemovePlayerFromGame(GameId, this);
+        //MatchManager.Instance.RemovePlayerFromMatch(GameId, this);
     }
 }

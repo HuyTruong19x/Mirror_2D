@@ -39,4 +39,12 @@ public class Match : NetworkBehaviour
     {
         _players.Remove(player);
     }
+
+    public void LeaveMatch(NetworkConnectionToClient conn)
+    {
+        if (_connections.Contains(conn))
+        {
+            _connections.Remove(conn);
+        }
+    }
 }

@@ -14,4 +14,16 @@ public class Player : NetworkBehaviour
     {
         LocalPlayer = this;
     }
+
+    [ServerCallback]
+    private void OnDestroy()
+    {
+        Disconnected(connectionToClient);
+    }
+
+    [ServerCallback]
+    public void Disconnected(NetworkConnectionToClient conn)
+    {
+        MatchManager.Instance.LeaveMatch(conn, MatchID);
+    }
 }
