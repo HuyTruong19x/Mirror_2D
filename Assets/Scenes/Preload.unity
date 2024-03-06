@@ -443,6 +443,7 @@ GameObject:
   - component: {fileID: 1441692249}
   - component: {fileID: 1441692248}
   - component: {fileID: 1441692247}
+  - component: {fileID: 1441692251}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -489,7 +490,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcf138fadbaf1904992a96289ad541cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RoomID: 
+  MatchID: 
 --- !u!114 &1441692249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -568,6 +569,18 @@ MonoBehaviour:
   timeInterpolationGui: 0
   _serverNetwork: {fileID: 1441692247}
   _clientNetwork: {fileID: 1441692248}
+--- !u!114 &1441692251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1441692245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d09f5c8bf2f4747b7a9284ef5d9ce2a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1922586907
 GameObject:
   m_ObjectHideFlags: 0
