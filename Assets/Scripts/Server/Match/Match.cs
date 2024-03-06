@@ -40,11 +40,13 @@ public class Match : NetworkBehaviour
         player.IsHost = _players.Count == 0;
         player.GameState = GameState.WAITING;
         _players.Add(player);
+        _info.UpdateStatus($"{_players.Count} / {_info.MaxPlayer}");
     }
 
     public void RemovePlayer(Player player)
     {
         _players.Remove(player);
+        _info.UpdateStatus($"{_players.Count} / {_info.MaxPlayer}");
     }
 
     public void LeaveMatch(NetworkConnectionToClient conn)
