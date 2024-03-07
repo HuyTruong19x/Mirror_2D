@@ -491,6 +491,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MatchID: 
+  _localMatchInfo: {fileID: 11400000, guid: fb3cf93edf8773e4a8588818ada228b7, type: 2}
 --- !u!114 &1441692249
 MonoBehaviour:
   m_ObjectHideFlags: 0

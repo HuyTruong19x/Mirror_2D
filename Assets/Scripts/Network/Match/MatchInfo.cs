@@ -9,6 +9,9 @@ public class MatchInfo
     public string Map;
     public string Status;
     public int MaxPlayer;
+    public int VoteTime;
+    public int DiscussTime;
+    public int RaiseTime;
 
     public MatchInfo(string id, string hostName, string mode, string map, int maxPlayer)
     {

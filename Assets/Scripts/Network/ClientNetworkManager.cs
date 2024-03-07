@@ -1,10 +1,13 @@
 using Mirror;
 using Mirror.Examples.MultipleMatch;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class ClientNetworkManager : MonoBehaviour
 {
     public string MatchID;
+    [SerializeField]
+    private MatchInfoSO _localMatchInfo;
 
     public void OnClientConnect()
     {
@@ -18,6 +21,7 @@ public class ClientNetworkManager : MonoBehaviour
     public void OnStartClient()
     {
         NetworkClient.RegisterHandler<ClientMatchMessage>(OnClientMessage);
+        NetworkClient.RegisterHandler<ClientMatchInfoMessage>(OnMatchInfoChangeMessage);
     }
 
     public void OnStopClient()
@@ -41,7 +45,10 @@ public class ClientNetworkManager : MonoBehaviour
                 HostName = playerInfo.Name,
                 Mode = "Random",
                 Map = "Map_0",
-                MaxPlayer = 16
+                MaxPlayer = 16,
+                RaiseTime = 15,
+                DiscussTime = 180,
+                VoteTime = 30
             },
             PlayerInfo = playerInfo// TODO get player info from data
         });
@@ -87,8 +94,15 @@ public class ClientNetworkManager : MonoBehaviour
         });
     }
 
+    [ClientCallback]
     private void OnClientMessage(ClientMatchMessage message)
     {
         EventDispatcher.Dispatch(MessageCode.MATCH, message);
+    }
+
+    [ClientCallback]
+    private void OnMatchInfoChangeMessage(ClientMatchInfoMessage message)
+    {
+        _localMatchInfo.SetInfo(message.Info);
     }
 }

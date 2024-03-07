@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class Match : NetworkBehaviour
 {
+    public string ID => _info.ID;
     public bool IsPlaying => _isPlaying;
     public bool IsEmpty => _Player.Count == 0;
     public MatchInfo Info => _info;
@@ -40,7 +41,7 @@ public class Match : NetworkBehaviour
     {
         if (_Player.ContainsKey(conn))
         {
-            player.MatchID = _info.ID;
+            player.MatchID = ID;
             player.IsHost = _Player.Where(x => x.Value != null).ToList().Count == 0;
             player.GameState = GameState.WAITING;
             _Player[conn] = player;

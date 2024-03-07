@@ -88,6 +88,11 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
         }
 
         SpawnPlayer(matchID);
+
+        conn.Send(new ClientMatchInfoMessage()
+        {
+            Info = MatchManager.Instance.GetMatch(matchID).Info
+        });
     }
 
     private void SpawnPlayer(string matchID)

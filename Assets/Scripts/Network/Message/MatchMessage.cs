@@ -17,6 +17,11 @@ public struct ClientMatchMessage : NetworkMessage
     public List<MatchInfo> MatchInfos;
 }
 
+public struct ClientMatchInfoMessage : NetworkMessage
+{
+    public MatchInfo Info;
+}
+
 public enum MatchOperation
 {
     NONE = 0,
