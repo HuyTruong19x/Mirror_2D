@@ -365,3 +365,4 @@ MonoBehaviour:
   MatchID: 
   IsHost: 0
   GameState: 0
+  _starGameEventSO: {fileID: 11400000, guid: 31e7ebe4f6561694294167df96478cc9, type: 2}

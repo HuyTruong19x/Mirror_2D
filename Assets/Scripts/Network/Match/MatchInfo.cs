@@ -1,7 +1,7 @@
 using System;
 
 [Serializable]
-public class MatchInfo
+public struct MatchInfo
 {
     public string ID;
     public string HostName;
@@ -13,20 +13,8 @@ public class MatchInfo
     public int DiscussTime;
     public int RaiseTime;
 
-    public MatchInfo(string id, string hostName, string mode, string map, int maxPlayer)
-    {
-        ID = id;
-        HostName = hostName;
-        Mode = mode;
-        Map = map;
-        MaxPlayer = maxPlayer;
-    }
-
     public void UpdateStatus(string status)
     {
         Status = status;
     }
-
-    public MatchInfo()
-    { }
 }

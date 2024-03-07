@@ -10,7 +10,7 @@ public class UIGame : MonoBehaviour
     [SerializeField]
     private InputField _matchId;
 
-    public void SetHost(bool isHost)
+    public void ShowStartButton(bool isHost)
     {
         _startGameButton.gameObject.SetActive(isHost);
     }
@@ -18,7 +18,7 @@ public class UIGame : MonoBehaviour
     public void SetMatchID(string matchId)
     {
         _matchId.text = matchId;
-    }
+    }  
 
     public void StartGame()
     {

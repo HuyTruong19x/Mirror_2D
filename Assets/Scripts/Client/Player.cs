@@ -15,6 +15,9 @@ public class Player : NetworkBehaviour
     [SyncVar(hook = nameof(OnHostChanged))] public bool IsHost = false;
     [SyncVar(hook = nameof(OnGameStateChanged))] public GameState GameState;
 
+    [SerializeField]
+    private VoidChannelEventSO _starGameEventSO;
+
     private PlayerRole _role;
 
     public override void OnStartLocalPlayer()
@@ -53,7 +56,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void StartGame()
     {
-
+        _starGameEventSO.Raise();
     }
 
     [ClientRpc]

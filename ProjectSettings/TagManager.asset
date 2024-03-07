@@ -47,3 +47,6 @@ TagManager:
   - name: Player
     uniqueID: 3696499295
     locked: 0
+  - name: KillEffect
+    uniqueID: 1514298387
+    locked: 0

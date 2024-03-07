@@ -1,5 +1,4 @@
 using Mirror;
-using System.Collections;
 using UnityEngine;
 
 public class GameController : SingletonBehavior<GameController>
@@ -13,6 +12,7 @@ public class GameController : SingletonBehavior<GameController>
     private GameObject _waitingMap;
     [SerializeField]
     private GameObject _gameMap;
+    private bool _isHost;
 
     void Start()
     {
@@ -34,13 +34,15 @@ public class GameController : SingletonBehavior<GameController>
 
     private void OnStateChange()
     {
+        _uiGame.ShowStartButton(_currentState == GameState.WAITING && _isHost);
         _waitingMap.SetActive(_currentState == GameState.WAITING);
         _gameMap.SetActive(_currentState != GameState.WAITING);
     }
 
     public void ChangeHost(bool isHost)
     {
-        _uiGame.SetHost(isHost);
+        _isHost = isHost;
+        _uiGame.ShowStartButton(isHost && _currentState == GameState.WAITING);
     }
 }
 
