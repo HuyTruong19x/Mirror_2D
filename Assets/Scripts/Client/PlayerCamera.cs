@@ -27,4 +27,12 @@ public class PlayerCamera : NetworkBehaviour
             _mainCam.transform.SetParent(null);
         }
     }
+
+    public void UpdateViewLayer(LayerMask layerMask)
+    {
+        if (_mainCam != null)
+        {
+            _mainCam.cullingMask = layerMask;
+        }
+    }
 }

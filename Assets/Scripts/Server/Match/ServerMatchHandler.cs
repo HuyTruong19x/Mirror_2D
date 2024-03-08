@@ -134,6 +134,7 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
                 GameObject player = GameObject.Instantiate(NetworkManager.singleton.playerPrefab);
                 if (MatchManager.Instance.AddPlayerToMatch(item, matchID, player.GetComponent<Player>()))
                 {
+                    player.name = "Player_" + _players.Count;
                     player.GetComponent<NetworkMatch>().matchId = matchID.ToGuid();
                     NetworkServer.AddPlayerForConnection(item, player);
                     _players.Add(item, player);

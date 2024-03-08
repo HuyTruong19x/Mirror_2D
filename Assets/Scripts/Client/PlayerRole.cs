@@ -1,4 +1,7 @@
 using Mirror;
+using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerRole : NetworkBehaviour
@@ -6,33 +9,38 @@ public class PlayerRole : NetworkBehaviour
     [SerializeField]
     private UIPlayer _uiPlayer;
     private UIPlayer _currentView;
-    public PlayerRole _target;
+    public Player _target;
 
-    public Role Role;
+    [SerializeField]
+    private RoleDataSO _myRole;
+    [SerializeField]
+    private List<RoleDataSO> _roles;
+    private Dictionary<int, RoleDataSO> _roleData = new();
 
     private void Awake()
     {
+        _roleData = _roles.ToDictionary((role) => role.ID);
     }
 
     public void Execute()
     {
-        Role.Action(_target.Role);
+        _myRole.Action?.DoAction(GetComponent<Player>(), _target);
     }
 
-    public void UpdateRole(Role newRole)
+    public void UpdateRole(int roleID)
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer && _roleData.TryGetValue(roleID, out var role))
         {
-            Role = newRole;
+            _myRole = role;
             _currentView ??= Instantiate(_uiPlayer);
             _currentView.OnClick = Execute;
-            newRole.UpdateUI(_currentView);
+            _currentView.UpdateUI(_myRole);
         }
     }
 
-    public void Show(PlayerRole role)
+    public void Show(Player role)
     {
-        if(isLocalPlayer)
+        if (isLocalPlayer)
         {
             _currentView ??= Instantiate(_uiPlayer);
             _currentView.SetActionInteract(true);
@@ -54,5 +62,10 @@ public class PlayerRole : NetworkBehaviour
         {
             _currentView?.SetUseInteract(true);
         }
+    }
+
+    public void Dead()
+    {
+        _currentView.HideAction();
     }
 }

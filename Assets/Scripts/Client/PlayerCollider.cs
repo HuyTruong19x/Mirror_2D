@@ -12,7 +12,7 @@ public class PlayerCollider : NetworkBehaviour
     private Player _player;
 
     [SyncVar(hook = nameof(OnNearestPlayerChanged))]
-    private PlayerRole _nearestPlayer;
+    private Player _nearestPlayer;
 
 
     private void Awake()
@@ -40,7 +40,7 @@ public class PlayerCollider : NetworkBehaviour
                 if (min > Vector2.Distance(transform.position, colliders[i].transform.position)
                     && colliders[i].gameObject != gameObject)
                 {
-                    _nearestPlayer = colliders[i].GetComponent<PlayerRole>();
+                    _nearestPlayer = colliders[i].GetComponent<Player>();
                 }
             }
         }
@@ -66,7 +66,7 @@ public class PlayerCollider : NetworkBehaviour
     }
 
     [ClientCallback]
-    private void OnNearestPlayerChanged(PlayerRole old, PlayerRole newPlayer)
+    private void OnNearestPlayerChanged(Player _, Player newPlayer)
     {
         if(newPlayer != null)
         {

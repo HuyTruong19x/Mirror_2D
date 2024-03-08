@@ -8,7 +8,7 @@ public class Map : MonoBehaviour
     public int MapID;
     [SerializeField]
     private List<Transform> _startPositions = new();
-    public readonly List<Role> Roles = new();
+    public readonly List<int> Roles = new();
 
     public Vector3 GetStartPosition()
     {
@@ -16,7 +16,7 @@ public class Map : MonoBehaviour
     }
 
     [ServerCallback]
-    public Role GetRandomRole()
+    public int GetRandomRole()
     {
         var role = Roles[0];
         Roles.RemoveAt(0);
@@ -49,18 +49,18 @@ public class Map : MonoBehaviour
 
         for (int i = 0; i < wolfCount; i++)
         {
-            Roles.Add(new RoleWolf());
+            Roles.Add(2);
         }
 
         for (int i = 0; i < foxCount; i++)
         {
-            Roles.Add(new RoleFox());
+            Roles.Add(1);
         }
 
         int playerCount = TotalPlayer - wolfCount - foxCount;
         for (int i = 0; i < playerCount; i++)
         {
-            Roles.Add(new RoleDog());
+            Roles.Add(0);
         }
 
         Roles.Shuffer();

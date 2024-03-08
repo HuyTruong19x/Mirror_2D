@@ -23,8 +23,27 @@ public class Match : NetworkBehaviour
     private bool _isPlaying = false;
 
     [SyncVar(hook = nameof(OnStatusChanged))] private string _status;
+
+    [Header("Local Event")]
     [SerializeField]
     private StringChannelEventSO _onStatusChanged;
+    [SerializeField]
+    private IntChannelEventSO _onMaxPlayerChanged;
+
+    [SerializeField]
+    private GameObject _deadPrefab;
+
+    [ClientCallback]
+    private void OnEnable()
+    {
+        _onMaxPlayerChanged.AddListener(RequestChangeMaxPlayer);
+    }
+
+    [ClientCallback]
+    private void OnDisable()
+    {
+        _onMaxPlayerChanged.RemoveListener(RequestChangeMaxPlayer);
+    }
 
     [ServerCallback]
     public void Initialize(NetworkConnectionToClient conn, MatchInfo info)
@@ -95,7 +114,9 @@ public class Match : NetworkBehaviour
 
         foreach (var player in _Player)
         {
+            player.Value.Match = this;
             player.Value.GameState = GameState.PLAYING;
+            player.Value.State = 0;
             player.Value.SetRole(_map.GetRandomRole());
             player.Value.StartGame();
             player.Value.MoveToPosition(_map.GetStartPosition());
@@ -120,4 +141,27 @@ public class Match : NetworkBehaviour
     {
         _onStatusChanged.Raise(status);
     }
+
+    [ClientCallback]
+    private void RequestChangeMaxPlayer(int maxPlayer)
+    {
+        CmdChangeMaxPlayer(maxPlayer);
+    }
+
+    [Command(requiresAuthority = false)]
+    private void CmdChangeMaxPlayer(int maxPlayer, NetworkConnectionToClient conn = null)
+    {
+        _info.MaxPlayer = maxPlayer;
+        UpdateMatchStatus();
+    }
+
+    #region GamePlay
+    public void KillPlayer(Player player)
+    {
+        var go = Instantiate(_deadPrefab, player.gameObject.transform.position, Quaternion.identity);
+        go.GetComponent<NetworkMatch>().matchId = ID.ToGuid();
+        NetworkServer.Spawn(go);
+        player.State = 1;
+    }    
+    #endregion
 }

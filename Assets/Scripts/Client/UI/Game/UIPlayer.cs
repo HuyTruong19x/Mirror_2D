@@ -19,16 +19,6 @@ public class UIPlayer : MonoBehaviour
         _actionButton.interactable = canInteract;
     }  
 
-    public void ShowAction()
-    {
-        _actionButton.gameObject.SetActive(true);
-    }
-
-    public void HideAction()
-    {
-        _actionButton.gameObject.SetActive(false);
-    }
-
     public void SetReportInteract(bool canInteract)
     {
         _reportButton.interactable = canInteract;
@@ -52,5 +42,17 @@ public class UIPlayer : MonoBehaviour
     public void Use()
     {
 
+    }
+
+    public void UpdateUI(RoleDataSO roleData)
+    {
+        _actionButton.gameObject.SetActive(roleData.Action != null);
+        _actionButton.GetComponent<Image>().sprite = roleData.SpaceIcon;
+    }    
+
+    public void HideAction()
+    {
+        _actionButton.gameObject.SetActive(false);
+        _reportButton.gameObject.SetActive(false);
     }
 }

@@ -672,8 +672,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _actionButton: {fileID: 4114396984416479963}
-  _useButton: {fileID: 0}
-  _reportButton: {fileID: 0}
+  _useButton: {fileID: 7838825018616700471}
+  _reportButton: {fileID: 4169644937415209088}
 --- !u!1 &7585613798460102811
 GameObject:
   m_ObjectHideFlags: 0

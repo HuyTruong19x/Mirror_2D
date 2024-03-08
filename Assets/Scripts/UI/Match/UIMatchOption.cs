@@ -5,14 +5,25 @@ using UnityEngine.UI;
 
 public class UIMatchOption : MonoBehaviour
 {
+    [Header("Event")]
     [SerializeField]
     private VoidChannelEventSO _requestRoomOptionEventSO;
+    [SerializeField]
+    private IntChannelEventSO _requestChangeMaxPlayer;
+
+    [Header("Match Option")]
     [SerializeField]
     private GameObject _lockBG;
     [SerializeField]
     private GameObject _container;
     [SerializeField]
     private MatchInfoSO _matchInfoSO;
+
+    [Header("MaxPlayer")]
+    [SerializeField]
+    private Slider _sliderMaxPlayer;
+    [SerializeField]
+    private Text _txtMaxPlayer;
 
     [Header("Discuss")]
     [SerializeField]
@@ -52,10 +63,19 @@ public class UIMatchOption : MonoBehaviour
 
     private void OnMatchOptionChanged(MatchInfo matchInfo)
     {
+        _sliderMaxPlayer.value = matchInfo.MaxPlayer;
+        _txtMaxPlayer.text = _sliderMaxPlayer.value.ToString();
+
         _sliderDiscuss.value = matchInfo.DiscussTime;
         _inputDiscuss.text = matchInfo.DiscussTime.ToString();
 
         _sliderVote.value = matchInfo.VoteTime;
         _inputVote.text = matchInfo.VoteTime.ToString();
+    }    
+
+    public void OnMaxPlayerChanged()
+    {
+        _txtMaxPlayer.text = _sliderMaxPlayer.value.ToString();
+        _requestChangeMaxPlayer.Raise((int)_sliderMaxPlayer.value);
     }    
 }

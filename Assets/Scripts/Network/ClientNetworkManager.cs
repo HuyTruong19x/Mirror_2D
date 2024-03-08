@@ -37,7 +37,7 @@ public class ClientNetworkManager : MonoBehaviour
     {
         _localMatchInfo.Info = new MatchInfo()
         {
-            HostName = _playerData.Data.Name + "'s Room",
+            HostName = _playerData.Data.Name,
             Mode = "Random",
             Map = "Map_0",
             MaxPlayer = 16,
