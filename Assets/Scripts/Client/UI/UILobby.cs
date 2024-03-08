@@ -35,15 +35,16 @@ public class UILobby : MonoBehaviour
         switch (roomData.Operation)
         {
             case MatchOperation.CREATE:
-            case MatchOperation.JOIN: LoadGameScene( roomData.Result); break;
+            case MatchOperation.JOIN: LoadGameScene( roomData); break;
             case MatchOperation.LIST: UpdateRoomList(roomData.MatchInfos); break;
         }
     }
 
-    private void LoadGameScene(Result result)
+    private void LoadGameScene(ClientMatchMessage result)
     {
-        if(result == Result.SUCCESS)
+        if(result.Result == Result.SUCCESS)
         {
+            _networkManager.SetMatchID(result.MatchID);
             this.gameObject.SetActive(false);
             SceneManager.LoadScene("Game");
         }

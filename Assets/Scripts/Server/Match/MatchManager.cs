@@ -97,7 +97,7 @@ public class MatchManager : Singleton<MatchManager>
     public static string GetRandomID()
     {
         string _id = string.Empty;
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 6; i++)
         {
             int random = UnityEngine.Random.Range(0, 36);
             if (random < 26)

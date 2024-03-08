@@ -30,12 +30,14 @@ public class ClientNetworkManager : MonoBehaviour
         NetworkClient.UnregisterHandler<ClientMatchMessage>();
     }
 
+    #region REQUEST
+
     [ClientCallback]
     public void RequestCreateRoom()
     {
         _localMatchInfo.Info = new MatchInfo()
         {
-            HostName = _playerData.Data.Name,
+            HostName = _playerData.Data.Name + "'s Room",
             Mode = "Random",
             Map = "Map_0",
             MaxPlayer = 16,
@@ -115,8 +117,9 @@ public class ClientNetworkManager : MonoBehaviour
         {
             Operation = MatchOperation.LEAVE
         });
-    }    
-    
+    }
+
+    #endregion
 
     [ClientCallback]
     private void OnClientMessage(ClientMatchMessage message)
@@ -129,4 +132,10 @@ public class ClientNetworkManager : MonoBehaviour
     {
         _localMatchInfo.SetInfo(message.Info);
     }
+
+    [ClientCallback]
+    public void SetMatchID(string matchID)
+    {
+        _localMatchInfo.Info.ID = matchID;
+    }    
 }

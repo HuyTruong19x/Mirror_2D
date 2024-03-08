@@ -8,15 +8,11 @@ public class UIMatchOption : MonoBehaviour
     [SerializeField]
     private VoidChannelEventSO _requestRoomOptionEventSO;
     [SerializeField]
+    private GameObject _lockBG;
+    [SerializeField]
     private GameObject _container;
     [SerializeField]
     private MatchInfoSO _matchInfoSO;
-
-    [Header("Raise")]
-    [SerializeField]
-    private Slider _sliderRaise;
-    [SerializeField]
-    private InputField _inputRaise;
 
     [Header("Discuss")]
     [SerializeField]
@@ -44,19 +40,18 @@ public class UIMatchOption : MonoBehaviour
 
     private void Awake()
     {
+        _lockBG.SetActive(false);
         _container.SetActive(false);
     }
 
     private void Show()
     {
+        _lockBG.SetActive(true);
         _container.SetActive(true);
     }
 
     private void OnMatchOptionChanged(MatchInfo matchInfo)
     {
-        _sliderRaise.value = matchInfo.RaiseTime;
-        _inputRaise.text = matchInfo.RaiseTime.ToString();
-
         _sliderDiscuss.value = matchInfo.DiscussTime;
         _inputDiscuss.text = matchInfo.DiscussTime.ToString();
 
