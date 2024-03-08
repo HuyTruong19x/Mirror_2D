@@ -12,9 +12,4 @@ public struct MatchInfo
     public int VoteTime;
     public int DiscussTime;
     public int RaiseTime;
-
-    public void UpdateStatus(string status)
-    {
-        Status = status;
-    }
 }

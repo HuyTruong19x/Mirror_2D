@@ -3504,6 +3504,7 @@ MonoBehaviour:
   _playerStatus: {fileID: 1813503319}
   _gameMode: {fileID: 480299254}
   _matchInfo: {fileID: 11400000, guid: fb3cf93edf8773e4a8588818ada228b7, type: 2}
+  _onStatusChanged: {fileID: 11400000, guid: 81236536fac5a224bac3a975b0bdc794, type: 2}
 --- !u!1 &1018597595
 GameObject:
   m_ObjectHideFlags: 0

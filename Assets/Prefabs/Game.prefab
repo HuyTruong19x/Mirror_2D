@@ -89,4 +89,8 @@ MonoBehaviour:
     Map: 
     Status: 
     MaxPlayer: 0
+    VoteTime: 0
+    DiscussTime: 0
+    RaiseTime: 0
   _map: {fileID: 192014279240325972, guid: d976d2c118124b54fa25f54a9e3ca232, type: 3}
+  _onStatusChanged: {fileID: 11400000, guid: 81236536fac5a224bac3a975b0bdc794, type: 2}

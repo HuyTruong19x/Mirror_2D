@@ -20,13 +20,21 @@ public class UIWaiting : MonoBehaviour
     private Text _gameMode;
     [SerializeField]
     private MatchInfoSO _matchInfo;
+    [SerializeField]
+    private StringChannelEventSO _onStatusChanged;
 
     private void OnEnable()
     {
         SetMatchID(_matchInfo.Info.ID);
         SetMatchName(_matchInfo.Info.HostName);
         SetGameMode(_matchInfo.Info.Mode);
-        _matchInfo.OnMatchInfoChanged += OnMatchInfoChanged;
+
+        _onStatusChanged.AddListener(ChangeStatus);
+    }
+
+    private void OnDisable()
+    {
+        _onStatusChanged.RemoveListener(ChangeStatus);
     }
 
     public void ShowStartButton(bool isHost)
@@ -59,11 +67,6 @@ public class UIWaiting : MonoBehaviour
     public void ChangeStatus(string status)
     {
         _playerStatus.text = status;
-    }
-
-    private void OnMatchInfoChanged(MatchInfo info)
-    {
-        ChangeStatus(info.Status);
     }
 
     public void StartGame()

@@ -1,4 +1,5 @@
 using Mirror;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -23,9 +24,14 @@ public class UILobby : MonoBehaviour
         EventDispatcher.Unsubscribe(MessageCode.MATCH, Handle);
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
+        while(!NetworkClient.isConnected)
+        {
+            yield return null;
+        }    
         _networkManager = GameNetworkManager.singleton.Client;
+        RefreshRoom();
     }
 
     private void Handle(NetworkMessage data)

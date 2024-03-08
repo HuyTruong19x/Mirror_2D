@@ -9,6 +9,7 @@ public class Match : NetworkBehaviour
     public string ID => _info.ID;
     public bool IsPlaying => _isPlaying;
     public bool IsEmpty => _Player.Count == 0;
+
     public MatchInfo Info => _info;
 
     [SerializeField]
@@ -21,12 +22,18 @@ public class Match : NetworkBehaviour
 
     private bool _isPlaying = false;
 
+    [SyncVar(hook = nameof(OnStatusChanged))] private string _status;
+    [SerializeField]
+    private StringChannelEventSO _onStatusChanged;
+
+    [ServerCallback]
     public void Initialize(NetworkConnectionToClient conn, MatchInfo info)
     {
         _info = info;
         _Player.Add(conn, null);
     }
 
+    [ServerCallback]
     public bool JoinMatch(NetworkConnectionToClient conn)
     {
         if (_Player.Count >= _info.MaxPlayer)
@@ -38,6 +45,7 @@ public class Match : NetworkBehaviour
         return true;
     }
 
+    [ServerCallback]
     public bool AddPlayer(NetworkConnectionToClient conn, Player player)
     {
         if (_Player.ContainsKey(conn))
@@ -53,6 +61,7 @@ public class Match : NetworkBehaviour
         return false;
     }
 
+    [ServerCallback]
     public void RemovePlayer(NetworkConnectionToClient conn)
     {
         if (_Player.ContainsKey(conn))
@@ -62,6 +71,7 @@ public class Match : NetworkBehaviour
         }
     }
 
+    [ServerCallback]
     public void LeaveMatch(NetworkConnectionToClient conn)
     {
         if (_Player.ContainsKey(conn))
@@ -69,7 +79,7 @@ public class Match : NetworkBehaviour
             var isHost = _Player[conn].IsHost;
             _Player.Remove(conn);
 
-            if(_Player.Count > 0)
+            if (_Player.Count > 0)
             {
                 _Player.ElementAt(0).Value.IsHost = isHost;
             }
@@ -77,6 +87,7 @@ public class Match : NetworkBehaviour
         }
     }
 
+    [ServerCallback]
     public void StartMatch()
     {
         _isPlaying = true;
@@ -91,13 +102,22 @@ public class Match : NetworkBehaviour
         }
     }
 
+    [ServerCallback]
     private void UpdateMatchStatus()
     {
-        _info.UpdateStatus($"{_Player.Where(x => x.Value != null).ToList().Count} / {_info.MaxPlayer}");
+        _status = ($"{_Player.Where(x => x.Value != null).ToList().Count} / {_info.MaxPlayer}");
+        _info.Status = _status;
     }
 
+    [ServerCallback]
     public List<NetworkConnectionToClient> GetConnections()
     {
         return _Player.Keys.ToList();
+    }
+
+    [ClientCallback]
+    private void OnStatusChanged(string _, string status)
+    {
+        _onStatusChanged.Raise(status);
     }
 }
