@@ -1,4 +1,5 @@
 using Mirror;
+using Mirror.Examples.MultipleMatch;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,6 +7,7 @@ using UnityEngine;
 [MessageAttribute(MessageCode.MATCH)]
 public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
 {
+    private readonly Dictionary<NetworkConnectionToClient, string> _matchIDSaver = new();
     private readonly Dictionary<string, GameObject> _matchs = new();
     private Dictionary<NetworkConnectionToClient, GameObject> _players = new();
 
@@ -16,10 +18,10 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
             case MatchOperation.CREATE: CreateMatch(conn, message); break;
             case MatchOperation.JOIN: JoinMatch(conn, message); break;
             case MatchOperation.QUICK_JOIN: QuickJoinMatch(conn, message); break;
-            case MatchOperation.LEAVE: LeaveMatch(conn, message); break;
+            case MatchOperation.LEAVE: LeaveMatch(conn); break;
             case MatchOperation.LIST: ListMatch(conn); break;
-            case MatchOperation.LOADED_GAME_SCENE: CreateMatchObject(conn, message.MatchID); break;
-            case MatchOperation.START_GAME: StartMatch(conn, message.MatchID); break;
+            case MatchOperation.LOADED_GAME_SCENE: CreateMatchObject(conn); break;
+            case MatchOperation.START_GAME: StartMatch(conn); break;
         }
     }
 
@@ -35,6 +37,11 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
         });
 
         _matchs.Add(matchInfo.ID, null);
+
+        if(isSuccess)
+        {
+            _matchIDSaver.Add(conn, matchInfo.ID);
+        }    
     }
 
     private void QuickJoinMatch(NetworkConnectionToClient conn, ServerMatchMessage message)
@@ -48,8 +55,10 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
                 {
                     Operation = MatchOperation.JOIN,
                     Result = Result.SUCCESS,
-                    MatchID = match.Key
+                    MatchID = match.Key,
                 });
+
+                _matchIDSaver.Add(conn, match.Key);
                 return;
             }
         }
@@ -63,36 +72,45 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
 
     private void JoinMatch(NetworkConnectionToClient conn, ServerMatchMessage message)
     {
+        var result = MatchManager.Instance.JoinMatch(conn, message.MatchID);
         conn.Send(new ClientMatchMessage()
         {
             Operation = MatchOperation.JOIN,
-            Result = MatchManager.Instance.JoinMatch(conn, message.MatchID) ? Result.SUCCESS : Result.FAILED,
+            Result = result ? Result.SUCCESS : Result.FAILED,
             MatchID = message.MatchID
         });
+
+        if(result)
+        {
+            _matchIDSaver.Add(conn, message.MatchID);
+        }    
     }
 
-    private void CreateMatchObject(NetworkConnectionToClient conn, string matchID)
+    private void CreateMatchObject(NetworkConnectionToClient conn)
     {
-        if (_matchs[matchID] == null)
+        if(_matchIDSaver.TryGetValue(conn, out var matchID))
         {
-            var go = MatchManager.Instance.GetMatchObject(matchID);
-            if (go != null)
+            if (_matchs[matchID] == null)
             {
-                NetworkServer.Spawn(go);
-                _matchs[matchID] = go;
+                var go = MatchManager.Instance.GetMatchObject(matchID);
+                if (go != null)
+                {
+                    NetworkServer.Spawn(go);
+                    _matchs[matchID] = go;
+                }
+                else
+                {
+                    Debug.Log("Could not spawn match object due to not found");
+                }
             }
-            else
+
+            SpawnPlayer(matchID);
+
+            conn.Send(new ClientMatchInfoMessage()
             {
-                Debug.Log("Could not spawn match object due to not found");
-            }
-        }
-
-        SpawnPlayer(matchID);
-
-        conn.Send(new ClientMatchInfoMessage()
-        {
-            Info = MatchManager.Instance.GetMatch(matchID).Info
-        });
+                Info = MatchManager.Instance.GetMatch(matchID).Info
+            });
+        }    
     }
 
     private void SpawnPlayer(string matchID)
@@ -128,11 +146,16 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
         }
     }
 
-    private void LeaveMatch(NetworkConnectionToClient conn, ServerMatchMessage message)
+    private void LeaveMatch(NetworkConnectionToClient conn)
     {
-        GameObject.Destroy(_players[conn]);
-        _players.Remove(conn);
-        MatchManager.Instance.LeaveMatch(conn, message.MatchID);
+        if(_matchIDSaver.TryGetValue(conn, out string matchID))
+        {
+            GameObject.Destroy(_players[conn]);
+            _players.Remove(conn);
+            MatchManager.Instance.LeaveMatch(conn, matchID);
+            _matchIDSaver.Remove(conn);
+        }    
+        
     }
 
     private void ListMatch(NetworkConnectionToClient conn)
@@ -146,8 +169,12 @@ public class ServerMatchHandler : MessageHandler<ServerMatchMessage>
         });
     }
 
-    private void StartMatch(NetworkConnectionToClient conn, string matchID)
+    private void StartMatch(NetworkConnectionToClient conn)
     {
-        MatchManager.Instance.StartMatch(conn, matchID);
+        if(_matchIDSaver.TryGetValue(conn, out var matchID))
+        {
+            MatchManager.Instance.StartMatch(conn, matchID);
+        }
+        
     }
 }

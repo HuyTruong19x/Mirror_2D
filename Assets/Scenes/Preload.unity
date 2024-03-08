@@ -490,8 +490,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcf138fadbaf1904992a96289ad541cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MatchID: 
   _localMatchInfo: {fileID: 11400000, guid: fb3cf93edf8773e4a8588818ada228b7, type: 2}
+  _playerData: {fileID: 11400000, guid: d774aebcc9510554680ebdda26c65f22, type: 2}
 --- !u!114 &1441692249
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -48,9 +48,12 @@ public class ServerNetworkManager : MonoBehaviour
     #endregion
 
     [ServerCallback]
-    public void OnGameLoaded(string roomId)
+    public void LeaveGame(NetworkConnectionToClient conn)
     {
-           
+        ProcessMessage(conn, MessageCode.MATCH, new ServerMatchMessage()
+        {
+            Operation = MatchOperation.LEAVE
+        });
 
     }    
 }

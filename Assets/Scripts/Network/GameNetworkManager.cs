@@ -12,6 +12,7 @@ public class GameNetworkManager : NetworkManager
     private ClientNetworkManager _clientNetwork;
 
     public ClientNetworkManager Client => _clientNetwork;
+    public ServerNetworkManager Server => _serverNetwork;
 
     public static new GameNetworkManager singleton { get; private set; }
 

@@ -5,9 +5,10 @@ using UnityEngine;
 
 public class ClientNetworkManager : MonoBehaviour
 {
-    public string MatchID;
     [SerializeField]
     private MatchInfoSO _localMatchInfo;
+    [SerializeField]
+    private LocalPlayerDataSO _playerData;
 
     public void OnClientConnect()
     {
@@ -32,25 +33,22 @@ public class ClientNetworkManager : MonoBehaviour
     [ClientCallback]
     public void RequestCreateRoom()
     {
-        var playerInfo = new PlayerInfo()
+        _localMatchInfo.Info = new MatchInfo()
         {
-            ID = "ID_" + Random.Range(0, 100000),
-            Name = "User_" + Random.Range(0, 100000)
+            HostName = _playerData.Data.Name,
+            Mode = "Random",
+            Map = "Map_0",
+            MaxPlayer = 16,
+            RaiseTime = 15,
+            DiscussTime = 180,
+            VoteTime = 30
         };
+
         NetworkClient.Send(new ServerMatchMessage()
         {
             Operation = MatchOperation.CREATE,
-            MatchInfo = new MatchInfo()
-            {
-                HostName = playerInfo.Name,
-                Mode = "Random",
-                Map = "Map_0",
-                MaxPlayer = 16,
-                RaiseTime = 15,
-                DiscussTime = 180,
-                VoteTime = 30
-            },
-            PlayerInfo = playerInfo// TODO get player info from data
+            MatchInfo = _localMatchInfo.Info,
+            PlayerInfo = _playerData.Data
         });
     }
 
@@ -64,35 +62,61 @@ public class ClientNetworkManager : MonoBehaviour
     }
 
     [ClientCallback]
-    public void RequestJoinRoom(string roomId)
+    public void RequestJoinRoom(MatchInfo matchInfo)
     {
-        var playerInfo = new PlayerInfo()
+        if(string.IsNullOrEmpty(matchInfo.ID))
         {
-            ID = "ID_" + Random.Range(0, 100000),
-            Name = "User_" + Random.Range(0, 100000)
-        };
+            Debug.Log("Please selected room before joining");
+            return;
+        }    
+
+        _localMatchInfo.Info = matchInfo;
+
         NetworkClient.Send(new ServerMatchMessage()
         {
             Operation = MatchOperation.JOIN,
-            MatchID = roomId,
-            PlayerInfo = playerInfo// TODO get player info from data
+            MatchID = matchInfo.ID,
+            PlayerInfo = _playerData.Data
         });
     }
 
     [ClientCallback]
     public void RequestQuickJoin()
     {
-        var playerInfo = new PlayerInfo()
-        {
-            ID = "ID_" + Random.Range(0, 100000),
-            Name = "User_" + Random.Range(0, 100000)
-        };
         NetworkClient.Send(new ServerMatchMessage()
         {
             Operation = MatchOperation.QUICK_JOIN,
-            PlayerInfo = playerInfo// TODO get player info from data
+            PlayerInfo = _playerData.Data
         });
     }
+
+    [ClientCallback]
+    public void RequestLoadedGame()
+    {
+        NetworkClient.Send(new ServerMatchMessage()
+        {
+            Operation = MatchOperation.LOADED_GAME_SCENE
+        });
+    }
+
+    [ClientCallback]    
+    public void RequestStartGame()
+    {
+        NetworkClient.Send(new ServerMatchMessage()
+        {
+            Operation = MatchOperation.START_GAME
+        });
+    }
+
+    [ClientCallback]   
+    public void RequestLeaveGame()
+    {
+        NetworkClient.Send(new ServerMatchMessage()
+        {
+            Operation = MatchOperation.LEAVE
+        });
+    }    
+    
 
     [ClientCallback]
     private void OnClientMessage(ClientMatchMessage message)

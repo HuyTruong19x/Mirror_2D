@@ -11,7 +11,7 @@ public class UILobby : MonoBehaviour
     private UILobbyRoom _lobbyRoom;
 
     private ClientNetworkManager _networkManager;
-    private string _selectRoomId = string.Empty;
+    private MatchInfo _selectedMatch;
 
     private void OnEnable()
     {
@@ -35,18 +35,17 @@ public class UILobby : MonoBehaviour
         switch (roomData.Operation)
         {
             case MatchOperation.CREATE:
-            case MatchOperation.JOIN: LoadGameScene(roomData.MatchID, roomData.Result); break;
+            case MatchOperation.JOIN: LoadGameScene( roomData.Result); break;
             case MatchOperation.LIST: UpdateRoomList(roomData.MatchInfos); break;
         }
     }
 
-    private void LoadGameScene(string roomId, Result result)
+    private void LoadGameScene(Result result)
     {
         if(result == Result.SUCCESS)
         {
-            GameNetworkManager.singleton.Client.MatchID = roomId;
             this.gameObject.SetActive(false);
-            SceneManager.LoadScene(2);
+            SceneManager.LoadScene("Game");
         }
     }
 
@@ -59,12 +58,9 @@ public class UILobby : MonoBehaviour
 
         foreach (var match in infos)
         {
-            var lobbyInfo = new LobbyRoomInfo(match.ID, match.HostName, match.Mode, match.Map, match.MaxPlayer);
-            lobbyInfo.UpdateStatus(match.Status);
-
             Instantiate(_lobbyRoom, _lobbyRoomParent)
-                .Setup(lobbyInfo)
-                .OnButtonClick((id) => _selectRoomId = id)
+                .Setup(match)
+                .OnButtonClick((matchInfo) => _selectedMatch = matchInfo)
                 .Show();
         }
     }   
@@ -83,7 +79,7 @@ public class UILobby : MonoBehaviour
 
     public void JoinRoom()
     {
-        _networkManager.RequestJoinRoom(_selectRoomId);
+        _networkManager.RequestJoinRoom(_selectedMatch);
     }
 
     public void QuickJoin()

@@ -40,7 +40,7 @@ public class Player : NetworkBehaviour
     [ServerCallback]
     public void Disconnected(NetworkConnectionToClient conn)
     {
-        MatchManager.Instance.LeaveMatch(conn, MatchID);
+        GameNetworkManager.singleton.Server.LeaveGame(conn);
     }
 
     private void OnHostChanged(bool _, bool isHost)

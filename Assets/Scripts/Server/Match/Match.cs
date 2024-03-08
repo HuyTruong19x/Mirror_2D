@@ -13,6 +13,7 @@ public class Match : NetworkBehaviour
 
     [SerializeField]
     [SyncVar] private MatchInfo _info;
+
     private Dictionary<NetworkConnectionToClient, Player> _Player = new();
 
     [SerializeField]

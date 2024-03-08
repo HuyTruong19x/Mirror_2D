@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class UILobbyRoom : MonoBehaviour
 {
-    private LobbyRoomInfo _roomInfo;
+    private MatchInfo _info;
     [SerializeField]
     private Text _hostName;
     [SerializeField]
@@ -14,19 +14,19 @@ public class UILobbyRoom : MonoBehaviour
     [SerializeField]
     private Text _status;
 
-    private Action<string> OnClick;
+    private Action<MatchInfo> OnClick;
 
-    public UILobbyRoom Setup(LobbyRoomInfo info)
+    public UILobbyRoom Setup(MatchInfo info)
     {
         _hostName.text = info.HostName;
         _mode.text = info.Mode;
         _map.text = info.Map;
         _status.text = info.Status;
-        _roomInfo = info;
+        _info = info;
         return this;
     }
 
-    public UILobbyRoom OnButtonClick(Action<string> onClick)
+    public UILobbyRoom OnButtonClick(Action<MatchInfo> onClick)
     {
         OnClick = onClick;
         return this;
@@ -39,7 +39,7 @@ public class UILobbyRoom : MonoBehaviour
 
     public void Click()
     {
-        OnClick(_roomInfo.ID);
+        OnClick(_info);
     }    
 }
 

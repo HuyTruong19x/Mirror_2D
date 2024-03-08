@@ -16,14 +16,7 @@ public class GameController : SingletonBehavior<GameController>
 
     void Start()
     {
-        Debug.Log("Request match id " + GameNetworkManager.singleton.Client.MatchID);
-        NetworkClient.Send(new ServerMatchMessage()
-        {
-            Operation = MatchOperation.LOADED_GAME_SCENE,
-            MatchID = GameNetworkManager.singleton.Client.MatchID
-        });
-
-        _uiGame.SetMatchID(GameNetworkManager.singleton.Client.MatchID);
+        GameNetworkManager.singleton.Client.RequestLoadedGame();
     } 
 
     public void ChangeState(GameState state)

@@ -22,20 +22,12 @@ public class UIGame : MonoBehaviour
 
     public void StartGame()
     {
-        NetworkClient.Send(new ServerMatchMessage()
-        {
-            Operation = MatchOperation.START_GAME,
-            MatchID = GameNetworkManager.singleton.Client.MatchID
-        });
+        GameNetworkManager.singleton.Client.RequestStartGame();
     }
 
     public void ExitGame()
     {
-        NetworkClient.Send(new ServerMatchMessage()
-        {
-            Operation = MatchOperation.LEAVE,
-            MatchID = GameNetworkManager.singleton.Client.MatchID
-        });
-        SceneManager.LoadScene(1);
+        GameNetworkManager.singleton.Client.RequestLeaveGame();
+        SceneManager.LoadScene("Main");
     }
 }
