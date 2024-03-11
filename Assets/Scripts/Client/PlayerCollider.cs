@@ -70,7 +70,7 @@ public class PlayerCollider : NetworkBehaviour
     {
         if(newPlayer != null)
         {
-            _playerRole.Show(newPlayer);
+            _playerRole.SetTargetPlayer(newPlayer);
         }
         else
         {

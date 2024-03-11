@@ -82,6 +82,11 @@ public class Player : NetworkBehaviour
             gameObject.layer = _deadLayer;
             Dead();
         }
+        else
+        {
+            gameObject.layer = _normalLayer;
+            Live();
+        }    
     }
 
     [ClientCallback]
@@ -137,30 +142,62 @@ public class Player : NetworkBehaviour
         }
     }
 
+    [ClientCallback]
+    public void Live()
+    {
+        if (isLocalPlayer)
+        {
+            _camera.UpdateViewLayer(_normaViewlLayer);
+            _role.Hide();
+            GetComponent<SpriteRenderer>().color = Color.white;
+        }
+    }    
+
     [ServerCallback]
     public void RaiseMetting(Player player = null)
     {
-        Match.RaiseMetting(player);
+        Match.RaiseMetting();
+        Meeting(Match.Players, player);
     }
 
     [ClientRpc]
     public void Meeting(List<Player> players, Player player)
     {
-        if (isLocalPlayer)
-        {
-            GameController.Instance.Meeting(players, player);
-        }
+        GameController.Instance.Meeting(players, player);
     }
 
     public void Vote(string playerID)
     {
-        CmdVote(playerID);
+        CmdVote(PlayerInfo.ID, playerID);
     }
 
     [Command]
-    private void CmdVote(string playerID)
+    private void CmdVote(string playerIdVoted, string playerIDTarget)
     {
-        Match.Vote(playerID);
+        GameState = GameState.TALKING;
+        Match.Vote(connectionToClient, playerIDTarget);
+        RpcVote(playerIdVoted);
+    }
+
+    [ClientRpc]
+    private void RpcVote(string playerID)
+    {
+        GameController.Instance.Vote(playerID);
+    }
+
+    [ClientRpc]
+    public void RpcEndVote(string playerName)
+    {
+        GameController.Instance.EndVote(playerName);
+        _role.Show();
+    }
+
+    public void EndGame()
+    {
+        if(isLocalPlayer)
+        {
+            GameController.Instance.EndGame();
+        }    
     }
 }
 

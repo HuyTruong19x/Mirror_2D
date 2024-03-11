@@ -10,8 +10,8 @@ public class Match : NetworkBehaviour
     public string ID => _info.ID;
     public bool IsPlaying => _isPlaying;
     public bool IsEmpty => _player.Count == 0;
-
     public MatchInfo Info => _info;
+    public List<Player> Players => _player.Values.ToList();
 
     [SerializeField]
     [SyncVar] private MatchInfo _info;
@@ -34,6 +34,7 @@ public class Match : NetworkBehaviour
 
     [SerializeField]
     private DeadObject _deadPrefab;
+    private List<GameObject> _deadObjects = new();
 
     private Dictionary<string, int> _votes = new();
 
@@ -117,6 +118,7 @@ public class Match : NetworkBehaviour
     [ServerCallback]
     public void StartMatch()
     {
+        _deadObjects.Clear();
         _votes.Clear();
         _isPlaying = true;
         _map.SetupRole(_player.Count);
@@ -174,21 +176,25 @@ public class Match : NetworkBehaviour
         go.SetPlayer(player);
         NetworkServer.Spawn(go.gameObject);
         player.State = PlayerState.DEAD;
+        _deadObjects.Add(go.gameObject);
     }
 
     [ServerCallback]
-    public void RaiseMetting(Player playerDead)
+    public void RaiseMetting()
     {
-        foreach (var player in _player.Values)
+        _votes.Clear();
+    }
+
+    [ServerCallback]
+    public void Vote(NetworkConnectionToClient conn, string playerID)
+    {
+        if (playerID == null)
         {
-            player.Meeting(_player.Values.ToList(), playerDead);
+            Debug.Log($"Vote {playerID} has skipped");
+            return;
         }
-    }
 
-    [ServerCallback]
-    public void Vote(string playerID)
-    {
-        if(_votes.ContainsKey(playerID))
+        if (_votes.ContainsKey(playerID))
         {
             _votes[playerID]++;
         }
@@ -198,6 +204,71 @@ public class Match : NetworkBehaviour
         }
 
         Debug.Log($"Vote {playerID} has {_votes[playerID]}");
+
+        if (_votes.Count >= _player.Values.Count(x => x.State == PlayerState.LIVE))
+        {
+            //End vote
+            var deadId = CalculatorDeadPlayerAfterVoted();
+
+            if(!string.IsNullOrEmpty(deadId))
+            {
+                var dead = _player.Where(x => x.Value.PlayerInfo.ID == deadId).Single();
+                dead.Value.State = PlayerState.DEAD;
+                _player[conn].RpcEndVote(dead.Value.PlayerInfo.Name);
+            }
+            else
+            {
+                _player[conn].RpcEndVote(null);
+            }
+
+            //Start new round or end
+            //Ex new round
+            foreach (var item in _deadObjects)
+            {
+                NetworkServer.Destroy(item);
+            }
+            _deadObjects.Clear();
+
+            //new Round
+            //foreach (var player in  _player)
+            //{
+            //    player.Value.GameState = GameState.PLAYING;
+            //    player.Value.MoveToPosition(_map.GetStartPosition());
+            //}
+
+            if(_player.Values.Count(x => x.State == PlayerState.LIVE) == 1)
+            {
+                //End Game
+                foreach (var item in _player.Values)
+                {
+                    item.GameState = GameState.WAITING;
+                    item.State = PlayerState.LIVE;
+                    item.MoveToPosition(Vector3.zero);
+                    item.EndGame();
+                }
+            }    
+        }
+    }
+
+    private string CalculatorDeadPlayerAfterVoted()
+    {
+        var resultList = _votes.ToList();
+        resultList.Sort((x, y) => x.Value.CompareTo(y.Value));
+        if (resultList.Count > 2)
+        {
+            if (resultList[0].Value == resultList[1].Value)
+            {
+                return null;
+            }
+
+            return resultList[0].Key;
+        }    
+        else if(resultList.Count == 1)
+        {
+            return resultList[0].Key;
+        }    
+
+        return null;
     }
     #endregion
 }

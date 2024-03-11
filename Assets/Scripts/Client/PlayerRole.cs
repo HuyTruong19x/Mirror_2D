@@ -70,12 +70,20 @@ public class PlayerRole : NetworkBehaviour
         }
     }
 
-    public void Show(Player role)
+    public void SetTargetPlayer(Player role)
     {
         if (isLocalPlayer)
         {
             _currentView.SetActionInteract(true);
             _target = role;
+        }
+    }
+
+    public void Show()
+    {
+        if (isLocalPlayer)
+        {
+            _currentView.Show();
         }
     }
 

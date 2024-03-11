@@ -991,11 +991,6 @@ MonoBehaviour:
   MapID: 0
   _startPositions:
   - {fileID: 3967785622071114926}
-  - {fileID: 6967528035792201569}
-  - {fileID: 8187387208339198772}
-  - {fileID: 6812450433406778437}
-  - {fileID: 5093464716357389096}
-  - {fileID: 2502213742779897808}
 --- !u!1 &6884377192983612549
 GameObject:
   m_ObjectHideFlags: 0

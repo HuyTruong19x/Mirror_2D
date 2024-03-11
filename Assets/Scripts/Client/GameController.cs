@@ -19,6 +19,8 @@ public class GameController : SingletonBehavior<GameController>
     private UIDead _uiDead;
     [SerializeField]
     private UIMeeting _uiMeeting;
+    [SerializeField]
+    private UIEndGame _uiEndGame;
 
     void Start()
     {
@@ -53,6 +55,21 @@ public class GameController : SingletonBehavior<GameController>
     {
         _uiMeeting.Show(players, player);
     }
+
+    public void Vote(string playerId)
+    {
+        _uiMeeting.UpdateVote(playerId);
+    }    
+
+    public void EndVote(string playerName)
+    {
+        _uiMeeting.EndVote(playerName);
+    }    
+
+    public void EndGame()
+    {
+        _uiEndGame.Show();
+    }    
 }
 
 public enum GameState
