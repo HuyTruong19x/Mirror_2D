@@ -1,6 +1,7 @@
 using Mirror;
 using UnityEngine;
 
+
 public class Player : NetworkBehaviour
 {
     public static Player LocalPlayer;
@@ -11,14 +12,24 @@ public class Player : NetworkBehaviour
     [SyncVar] public string MatchID = string.Empty;
     [SyncVar(hook = nameof(OnHostChanged))] public bool IsHost = false;
     [SyncVar(hook = nameof(OnGameStateChanged))] public GameState GameState;
-    [SyncVar(hook = nameof(OnPlayerStateChanged))] public int State = 0;
+    [SyncVar(hook = nameof(OnPlayerStateChanged))] public PlayerState State = PlayerState.LIVE;
 
     [SerializeField]
     private VoidChannelEventSO _starGameEventSO;
 
     private PlayerRole _role;
+
+    [Header("Layer Setting")]
+    [SerializeField]
+    private LayerMask _normaViewlLayer;
     [SerializeField]
     private LayerMask _ghostViewLayer;
+    [SerializeField]
+    private string _layerNameOnDead = "Ghost";
+    [SerializeField]
+    private string _layerNamePlayer = "Player";
+    private int _deadLayer;
+    private int _normalLayer;
 
     public override void OnStartLocalPlayer()
     {
@@ -29,6 +40,8 @@ public class Player : NetworkBehaviour
     private void Start()
     {
         _role = GetComponent<PlayerRole>();
+        _deadLayer = LayerMask.NameToLayer(_layerNameOnDead);
+        _normalLayer = LayerMask.NameToLayer(_layerNamePlayer);
     }
 
     [ServerCallback]
@@ -57,6 +70,11 @@ public class Player : NetworkBehaviour
     public void StartGame()
     {
         _starGameEventSO.Raise();
+        gameObject.layer = _normalLayer;
+        if (isLocalPlayer)
+        {
+            GetComponent<PlayerCamera>().UpdateViewLayer(_normaViewlLayer);
+        }
     }
 
     [ClientRpc]
@@ -91,12 +109,12 @@ public class Player : NetworkBehaviour
     }
 
     [ClientCallback]
-    private void OnPlayerStateChanged(int _, int nextState)
+    private void OnPlayerStateChanged(PlayerState _, PlayerState nextState)
     {
-        if (nextState == 1)
+        if (nextState == PlayerState.DEAD)
         {
             Dead();
-            gameObject.layer = LayerMask.NameToLayer("Ghost");
+            gameObject.layer = _deadLayer;
             if(isLocalPlayer)
             {
                 GetComponent<PlayerCamera>().UpdateViewLayer(_ghostViewLayer);
@@ -104,4 +122,11 @@ public class Player : NetworkBehaviour
             }
         }
     }
+}
+
+public enum PlayerState
+{
+    NONE = 0,
+    LIVE = 1,
+    DEAD = 2,
 }

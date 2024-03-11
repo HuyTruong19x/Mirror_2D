@@ -31,7 +31,7 @@ public class Match : NetworkBehaviour
     private IntChannelEventSO _onMaxPlayerChanged;
 
     [SerializeField]
-    private GameObject _deadPrefab;
+    private DeadObject _deadPrefab;
 
     [ClientCallback]
     private void OnEnable()
@@ -116,7 +116,7 @@ public class Match : NetworkBehaviour
         {
             player.Value.Match = this;
             player.Value.GameState = GameState.PLAYING;
-            player.Value.State = 0;
+            player.Value.State = PlayerState.LIVE;
             player.Value.SetRole(_map.GetRandomRole());
             player.Value.StartGame();
             player.Value.MoveToPosition(_map.GetStartPosition());
@@ -160,8 +160,9 @@ public class Match : NetworkBehaviour
     {
         var go = Instantiate(_deadPrefab, player.gameObject.transform.position, Quaternion.identity);
         go.GetComponent<NetworkMatch>().matchId = ID.ToGuid();
-        NetworkServer.Spawn(go);
-        player.State = 1;
+        go.SetPlayer(player);
+        NetworkServer.Spawn(go.gameObject);
+        player.State = PlayerState.DEAD;
     }    
     #endregion
 }

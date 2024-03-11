@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4717598562863419567}
   - component: {fileID: -4371577672160083487}
   m_Layer: 0
-  m_Name: Game
+  m_Name: Match
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,4 +95,4 @@ MonoBehaviour:
   _map: {fileID: 192014279240325972, guid: d976d2c118124b54fa25f54a9e3ca232, type: 3}
   _onStatusChanged: {fileID: 11400000, guid: 81236536fac5a224bac3a975b0bdc794, type: 2}
   _onMaxPlayerChanged: {fileID: 11400000, guid: ff3433459e87af0419098e2f3c691523, type: 2}
-  _deadPrefab: {fileID: 7673374549848888061, guid: 9b9a356f2b746b841892e4a37f3317c7, type: 3}
+  _deadPrefab: {fileID: 126114367958457079, guid: 9b9a356f2b746b841892e4a37f3317c7, type: 3}

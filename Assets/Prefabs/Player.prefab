@@ -374,6 +374,11 @@ MonoBehaviour:
   GameState: 0
   State: 0
   _starGameEventSO: {fileID: 11400000, guid: 31e7ebe4f6561694294167df96478cc9, type: 2}
+  _normaViewlLayer:
+    serializedVersion: 2
+    m_Bits: 119
   _ghostViewLayer:
     serializedVersion: 2
     m_Bits: 4294967295
+  _layerNameOnDead: Ghost
+  _layerNamePlayer: Player

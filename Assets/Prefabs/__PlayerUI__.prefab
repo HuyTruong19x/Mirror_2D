@@ -12,12 +12,12 @@ GameObject:
   - component: {fileID: 7722568627149888284}
   - component: {fileID: 9157174718970440819}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3173248285397503054
 RectTransform:
   m_ObjectHideFlags: 0
@@ -671,6 +671,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c1f11f93ef15c642a83ceefe08f009b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _container: {fileID: 775832542634192125}
   _actionButton: {fileID: 4114396984416479963}
   _useButton: {fileID: 7838825018616700471}
   _reportButton: {fileID: 4169644937415209088}

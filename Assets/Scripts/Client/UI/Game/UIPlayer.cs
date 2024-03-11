@@ -6,8 +6,10 @@ using UnityEngine.UI;
 public class UIPlayer : MonoBehaviour
 {
     [SerializeField]
+    private GameObject _container;
+    [SerializeField]
     private Button _actionButton;
-    public Action OnClick;
+    public Action OnActionClick;
 
     [SerializeField]
     private Button _useButton;
@@ -31,7 +33,7 @@ public class UIPlayer : MonoBehaviour
 
     public void Action()
     {
-        OnClick?.Invoke();
+        OnActionClick?.Invoke();
     }
 
     public void Report()
@@ -54,5 +56,15 @@ public class UIPlayer : MonoBehaviour
     {
         _actionButton.gameObject.SetActive(false);
         _reportButton.gameObject.SetActive(false);
+    }
+
+    public void Show()
+    {
+        _container.SetActive(true);
+    }
+
+    public void Hide()
+    {
+        _container.SetActive(false);
     }
 }

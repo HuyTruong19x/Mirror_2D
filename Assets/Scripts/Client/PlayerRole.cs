@@ -10,6 +10,7 @@ public class PlayerRole : NetworkBehaviour
     private UIPlayer _uiPlayer;
     private UIPlayer _currentView;
     public Player _target;
+    private Player _deadPlayer;
 
     [SerializeField]
     private RoleDataSO _myRole;
@@ -22,9 +23,29 @@ public class PlayerRole : NetworkBehaviour
         _roleData = _roles.ToDictionary((role) => role.ID);
     }
 
+    public override void OnStartLocalPlayer()
+    {
+        InitializeView();
+    }
+
+    private void InitializeView()
+    {
+        if(_currentView == null)
+        {
+            _currentView ??= Instantiate(_uiPlayer);
+            _currentView.OnActionClick = Execute;
+            _currentView.Hide();
+        }
+    }
+
     public void Execute()
     {
         _myRole.Action?.DoAction(GetComponent<Player>(), _target);
+    }
+
+    private void Report()
+    {
+        //TODO report
     }
 
     public void UpdateRole(int roleID)
@@ -32,8 +53,7 @@ public class PlayerRole : NetworkBehaviour
         if (isLocalPlayer && _roleData.TryGetValue(roleID, out var role))
         {
             _myRole = role;
-            _currentView ??= Instantiate(_uiPlayer);
-            _currentView.OnClick = Execute;
+            _currentView.Show();
             _currentView.UpdateUI(_myRole);
         }
     }
@@ -67,5 +87,11 @@ public class PlayerRole : NetworkBehaviour
     public void Dead()
     {
         _currentView.HideAction();
+    }
+
+    public void CanReport(Player player)
+    {
+        _deadPlayer = player;
+        _currentView.SetReportInteract(player != null);
     }
 }
