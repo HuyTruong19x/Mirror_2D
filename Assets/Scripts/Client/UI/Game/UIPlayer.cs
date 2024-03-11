@@ -15,6 +15,7 @@ public class UIPlayer : MonoBehaviour
     private Button _useButton;
     [SerializeField]
     private Button _reportButton;
+    public Action OnReportClick;
 
     public void SetActionInteract(bool canInteract)
     {
@@ -38,7 +39,7 @@ public class UIPlayer : MonoBehaviour
 
     public void Report()
     {
-
+        OnReportClick?.Invoke();
     }
 
     public void Use()

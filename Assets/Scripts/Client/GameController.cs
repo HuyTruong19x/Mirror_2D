@@ -1,4 +1,6 @@
 using Mirror;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class GameController : SingletonBehavior<GameController>
@@ -13,6 +15,10 @@ public class GameController : SingletonBehavior<GameController>
     [SerializeField]
     private GameObject _gameMap;
     private bool _isHost;
+    [SerializeField]
+    private UIDead _uiDead;
+    [SerializeField]
+    private UIMeeting _uiMeeting;
 
     void Start()
     {
@@ -36,6 +42,16 @@ public class GameController : SingletonBehavior<GameController>
     {
         _isHost = isHost;
         _uiGame.ShowStartButton(isHost && _currentState == GameState.WAITING);
+    }
+
+    public void Dead()
+    {
+        _uiDead.Show();
+    }
+
+    public void Meeting(List<Player> players, Player player)
+    {
+        _uiMeeting.Show(players, player);
     }
 }
 

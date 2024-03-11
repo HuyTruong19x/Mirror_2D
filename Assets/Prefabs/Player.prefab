@@ -329,7 +329,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   _uiPlayer: {fileID: 989867667909634024, guid: e4a76859dbfe17f448d7e54fdf19df44, type: 3}
-  _target: {fileID: 0}
+  _player: {fileID: -5617717059102685040}
   _myRole: {fileID: 0}
   _roles:
   - {fileID: 11400000, guid: 41e6efdccf25e9949a6c06d8d638e851, type: 2}
@@ -366,14 +366,16 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   Match: {fileID: 0}
+  MatchID: 
   PlayerInfo:
     ID: 
     Name: 
-  MatchID: 
   IsHost: 0
   GameState: 0
   State: 0
   _starGameEventSO: {fileID: 11400000, guid: 31e7ebe4f6561694294167df96478cc9, type: 2}
+  _role: {fileID: 6841728930540758539}
+  _camera: {fileID: -1784903956088051286}
   _normaViewlLayer:
     serializedVersion: 2
     m_Bits: 119

@@ -10,7 +10,7 @@ public class MatchManager : Singleton<MatchManager>
 {
     private readonly Dictionary<string, Match> _matchs = new Dictionary<string, Match>();
 
-    public bool CreateMatch(NetworkConnectionToClient conn, ref MatchInfo matchInfo)
+    public bool CreateMatch(NetworkConnectionToClient conn, ref MatchInfo matchInfo, PlayerInfo playerInfo)
     {
         var gameID = GetRandomID();
         matchInfo.ID = gameID;
@@ -19,18 +19,18 @@ public class MatchManager : Singleton<MatchManager>
         matchControllerObject.GetComponent<NetworkMatch>().matchId = gameID.ToGuid();
 
         _matchs.Add(gameID, matchControllerObject.GetComponent<Match>());
-        _matchs[gameID].Initialize(conn, matchInfo);
+        _matchs[gameID].Initialize(conn, matchInfo, playerInfo);
 
         matchControllerObject.name = "Match_" + gameID;
 
         return true;
     }
 
-    public Match JoinMatch(NetworkConnectionToClient conn, string matchID)
+    public Match JoinMatch(NetworkConnectionToClient conn, string matchID, PlayerInfo playerInfo)
     {
         if (_matchs.ContainsKey(matchID))
         {
-            if (_matchs[matchID].JoinMatch(conn))
+            if (_matchs[matchID].JoinMatch(conn, playerInfo))
             {
                 return _matchs[matchID];
             }

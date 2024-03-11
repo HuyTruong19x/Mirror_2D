@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeadObject : MonoBehaviour
+public class DeadObject : NetworkBehaviour
 {
+    [SyncVar]
     private Player _deadPlayer;
 
     private void OnTriggerEnter2D(Collider2D collision)

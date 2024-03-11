@@ -9,7 +9,11 @@ public class PlayerRole : NetworkBehaviour
     [SerializeField]
     private UIPlayer _uiPlayer;
     private UIPlayer _currentView;
-    public Player _target;
+
+    [SerializeField]
+    private Player _player;
+
+    private Player _target;
     private Player _deadPlayer;
 
     [SerializeField]
@@ -34,6 +38,7 @@ public class PlayerRole : NetworkBehaviour
         {
             _currentView ??= Instantiate(_uiPlayer);
             _currentView.OnActionClick = Execute;
+            _currentView.OnReportClick = Report;
             _currentView.Hide();
         }
     }
@@ -45,7 +50,14 @@ public class PlayerRole : NetworkBehaviour
 
     private void Report()
     {
-        //TODO report
+        CmdReport();
+        _currentView.Hide();
+    }
+
+    [Command]
+    private void CmdReport()
+    {
+        _player.RaiseMetting(_deadPlayer);
     }
 
     public void UpdateRole(int roleID)
@@ -62,7 +74,6 @@ public class PlayerRole : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            _currentView ??= Instantiate(_uiPlayer);
             _currentView.SetActionInteract(true);
             _target = role;
         }
@@ -72,7 +83,7 @@ public class PlayerRole : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            _currentView?.SetActionInteract(false);
+            _currentView.SetActionInteract(false);
         }
     }
 
@@ -80,7 +91,7 @@ public class PlayerRole : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            _currentView?.SetUseInteract(true);
+            _currentView.SetUseInteract(true);
         }
     }
 
@@ -91,7 +102,10 @@ public class PlayerRole : NetworkBehaviour
 
     public void CanReport(Player player)
     {
-        _deadPlayer = player;
-        _currentView.SetReportInteract(player != null);
+        if (isLocalPlayer)
+        {
+            _deadPlayer = player;
+            _currentView.SetReportInteract(player != null);
+        }
     }
 }

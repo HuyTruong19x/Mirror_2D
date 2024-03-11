@@ -1,23 +1,30 @@
 using Mirror;
+using Mirror.Examples.MultipleMatch;
+using System.Collections.Generic;
 using UnityEngine;
 
 
 public class Player : NetworkBehaviour
 {
-    public static Player LocalPlayer;
+    public static Player Local;
 
     public Match Match;
-    public PlayerInfo PlayerInfo;
 
     [SyncVar] public string MatchID = string.Empty;
+    [SyncVar(hook = nameof(OnPlayerInfoChanged))] public PlayerInfo PlayerInfo;
     [SyncVar(hook = nameof(OnHostChanged))] public bool IsHost = false;
     [SyncVar(hook = nameof(OnGameStateChanged))] public GameState GameState;
     [SyncVar(hook = nameof(OnPlayerStateChanged))] public PlayerState State = PlayerState.LIVE;
 
+    [Header("Event SO")]
     [SerializeField]
     private VoidChannelEventSO _starGameEventSO;
 
+    [Header("Player Component")]
+    [SerializeField]
     private PlayerRole _role;
+    [SerializeField]
+    private PlayerCamera _camera;
 
     [Header("Layer Setting")]
     [SerializeField]
@@ -33,13 +40,12 @@ public class Player : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-        LocalPlayer = this;
+        Local = this;
         GameController.Instance.ChangeHost(IsHost);
     }
 
     private void Start()
     {
-        _role = GetComponent<PlayerRole>();
         _deadLayer = LayerMask.NameToLayer(_layerNameOnDead);
         _normalLayer = LayerMask.NameToLayer(_layerNamePlayer);
     }
@@ -56,14 +62,32 @@ public class Player : NetworkBehaviour
         GameNetworkManager.singleton.Server.LeaveGame(conn);
     }
 
+    [ClientCallback]
     private void OnHostChanged(bool _, bool isHost)
     {
         GameController.Instance.ChangeHost(isHost);
     }
 
+    [ClientCallback]
     private void OnGameStateChanged(GameState _, GameState state)
     {
         GameController.Instance.ChangeState(state);
+    }
+
+    [ClientCallback]
+    private void OnPlayerStateChanged(PlayerState _, PlayerState nextState)
+    {
+        if (nextState == PlayerState.DEAD)
+        {
+            gameObject.layer = _deadLayer;
+            Dead();
+        }
+    }
+
+    [ClientCallback]
+    private void OnPlayerInfoChanged(PlayerInfo _, PlayerInfo playerInfo)
+    {
+        gameObject.name = playerInfo.Name;
     }
 
     [ClientRpc]
@@ -73,7 +97,7 @@ public class Player : NetworkBehaviour
         gameObject.layer = _normalLayer;
         if (isLocalPlayer)
         {
-            GetComponent<PlayerCamera>().UpdateViewLayer(_normaViewlLayer);
+            _camera.UpdateViewLayer(_normaViewlLayer);
         }
     }
 
@@ -99,28 +123,44 @@ public class Player : NetworkBehaviour
     private void CmdKill(Player player)
     {
         Match.KillPlayer(player);
-        Debug.Log("I'm Dead");
     }
 
     [ClientCallback]
     public void Dead()
     {
-        GetComponent<SpriteRenderer>().color = Color.red;
+        if (isLocalPlayer)
+        {
+            _camera.UpdateViewLayer(_ghostViewLayer);
+            _role.Dead();
+            GetComponent<SpriteRenderer>().color = Color.red;
+            GameController.Instance.Dead();
+        }
     }
 
-    [ClientCallback]
-    private void OnPlayerStateChanged(PlayerState _, PlayerState nextState)
+    [ServerCallback]
+    public void RaiseMetting(Player player = null)
     {
-        if (nextState == PlayerState.DEAD)
+        Match.RaiseMetting(player);
+    }
+
+    [ClientRpc]
+    public void Meeting(List<Player> players, Player player)
+    {
+        if (isLocalPlayer)
         {
-            Dead();
-            gameObject.layer = _deadLayer;
-            if(isLocalPlayer)
-            {
-                GetComponent<PlayerCamera>().UpdateViewLayer(_ghostViewLayer);
-                GetComponent<PlayerRole>().Dead();
-            }
+            GameController.Instance.Meeting(players, player);
         }
+    }
+
+    public void Vote(string playerID)
+    {
+        CmdVote(playerID);
+    }
+
+    [Command]
+    private void CmdVote(string playerID)
+    {
+        Match.Vote(playerID);
     }
 }
 
