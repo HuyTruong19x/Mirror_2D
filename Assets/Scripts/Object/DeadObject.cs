@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class DeadObject : NetworkBehaviour
 {
-    [SyncVar]
     private Player _deadPlayer;
 
+    [ServerCallback]
     private void OnTriggerEnter2D(Collider2D collision)
     {
         var role = collision.GetComponent<PlayerRole>();
@@ -17,6 +17,7 @@ public class DeadObject : NetworkBehaviour
         }
     }
 
+    [ServerCallback]
     private void OnTriggerExit2D(Collider2D collision)
     {
         var role = collision.GetComponent<PlayerRole>();

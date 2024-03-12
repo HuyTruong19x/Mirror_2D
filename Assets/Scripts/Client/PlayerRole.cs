@@ -110,10 +110,17 @@ public class PlayerRole : NetworkBehaviour
 
     public void CanReport(Player player)
     {
-        if (isLocalPlayer)
-        {
-            _deadPlayer = player;
-            _currentView.SetReportInteract(player != null);
-        }
+        _deadPlayer = player;
+        UpdateReportView(player);
     }
+
+    [ClientRpc]
+    private void UpdateReportView(Player player)
+    {
+        if(isLocalPlayer)
+        {
+            Debug.Log("Updated view");
+            _currentView.SetReportInteract(player != null);
+        }    
+    }    
 }

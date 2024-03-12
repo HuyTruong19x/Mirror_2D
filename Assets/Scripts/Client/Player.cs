@@ -86,7 +86,7 @@ public class Player : NetworkBehaviour
         {
             gameObject.layer = _normalLayer;
             Live();
-        }    
+        }
     }
 
     [ClientCallback]
@@ -151,19 +151,19 @@ public class Player : NetworkBehaviour
             _role.Hide();
             GetComponent<SpriteRenderer>().color = Color.white;
         }
-    }    
+    }
 
     [ServerCallback]
     public void RaiseMetting(Player player = null)
     {
         Match.RaiseMetting();
-        Meeting(Match.Players, player);
+        Meeting(PlayerInfo.ID, Match.Players, player);
     }
 
     [ClientRpc]
-    public void Meeting(List<Player> players, Player player)
+    public void Meeting(string raisePlayerId, List<Player> players, Player player)
     {
-        GameController.Instance.Meeting(players, player);
+        GameController.Instance.Meeting(raisePlayerId, players, player);
     }
 
     public void Vote(string playerID)
@@ -176,13 +176,13 @@ public class Player : NetworkBehaviour
     {
         GameState = GameState.TALKING;
         Match.Vote(connectionToClient, playerIDTarget);
-        RpcVote(playerIdVoted);
+        RpcVote(playerIdVoted, playerIDTarget);
     }
 
     [ClientRpc]
-    private void RpcVote(string playerID)
+    private void RpcVote(string whoVoted, string targetVote)
     {
-        GameController.Instance.Vote(playerID);
+        GameController.Instance.Vote(whoVoted, targetVote);
     }
 
     [ClientRpc]
@@ -194,10 +194,10 @@ public class Player : NetworkBehaviour
 
     public void EndGame()
     {
-        if(isLocalPlayer)
+        if (isLocalPlayer)
         {
             GameController.Instance.EndGame();
-        }    
+        }
     }
 }
 

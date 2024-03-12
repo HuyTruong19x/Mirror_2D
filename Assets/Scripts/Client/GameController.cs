@@ -25,7 +25,7 @@ public class GameController : SingletonBehavior<GameController>
     void Start()
     {
         GameNetworkManager.singleton.Client.RequestLoadedGame();
-    } 
+    }
 
     public void ChangeState(GameState state)
     {
@@ -51,25 +51,25 @@ public class GameController : SingletonBehavior<GameController>
         _uiDead.Show();
     }
 
-    public void Meeting(List<Player> players, Player player)
+    public void Meeting(string raisePlayerId, List<Player> players, Player player)
     {
-        _uiMeeting.Show(players, player);
+        _uiMeeting.Show(raisePlayerId, players, player);
     }
 
-    public void Vote(string playerId)
+    public void Vote(string playerIdVoted, string playerIdTarget)
     {
-        _uiMeeting.UpdateVote(playerId);
-    }    
+        _uiMeeting.UpdateVote(playerIdVoted, playerIdTarget);
+    }
 
     public void EndVote(string playerName)
     {
         _uiMeeting.EndVote(playerName);
-    }    
+    }
 
     public void EndGame()
     {
         _uiEndGame.Show();
-    }    
+    }
 }
 
 public enum GameState

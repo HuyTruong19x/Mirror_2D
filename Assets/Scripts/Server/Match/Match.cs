@@ -183,15 +183,18 @@ public class Match : NetworkBehaviour
     public void RaiseMetting()
     {
         _votes.Clear();
+        voteCount = 0;
     }
 
+    private int voteCount = 0;
     [ServerCallback]
     public void Vote(NetworkConnectionToClient conn, string playerID)
     {
-        if (playerID == null)
+        voteCount++;
+        if (string.IsNullOrEmpty(playerID))
         {
-            Debug.Log($"Vote {playerID} has skipped");
-            return;
+            Debug.Log($"Vote skip");
+            playerID = string.Empty;
         }
 
         if (_votes.ContainsKey(playerID))
@@ -204,8 +207,8 @@ public class Match : NetworkBehaviour
         }
 
         Debug.Log($"Vote {playerID} has {_votes[playerID]}");
-
-        if (_votes.Count >= _player.Values.Count(x => x.State == PlayerState.LIVE))
+        Debug.Log("Vote count : " + voteCount + " player live " + _player.Values.Count(x => x.State == PlayerState.LIVE));
+        if (voteCount >= _player.Values.Count(x => x.State == PlayerState.LIVE))
         {
             //End vote
             var deadId = CalculatorDeadPlayerAfterVoted();
@@ -247,7 +250,7 @@ public class Match : NetworkBehaviour
                     item.EndGame();
                 }
             }    
-        }
+        }   
     }
 
     private string CalculatorDeadPlayerAfterVoted()
