@@ -949,8 +949,6 @@ MonoBehaviour:
   _container: {fileID: 5661841762424805359}
   _votingObject: {fileID: 1664158712606951595}
   _endVotingObject: {fileID: 2413195343043660196}
-  _playerParent: {fileID: 5762568409504792117}
-  _player: {fileID: 6547457895282489536}
   _skipButton: {fileID: 4905743846201910249}
   _voteResult: {fileID: 4982445550132382439}
   _delayShowVoteCount: 0.5
@@ -1061,8 +1059,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -125, y: 0}
-  m_SizeDelta: {x: -250, y: -300}
+  m_AnchoredPosition: {x: -125, y: 12.5}
+  m_SizeDelta: {x: -250, y: -275}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6427291962779881674
 CanvasRenderer:
@@ -1123,7 +1121,7 @@ MonoBehaviour:
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 400, y: 190}
-  m_Spacing: {x: 5, y: 3}
+  m_Spacing: {x: 10, y: 10}
   m_Constraint: 1
   m_ConstraintCount: 4
 --- !u!1 &6321841177100138774

@@ -72,7 +72,10 @@ public class Player : NetworkBehaviour
     [ClientCallback]
     private void OnGameStateChanged(GameState _, GameState state)
     {
-        GameController.Instance.ChangeState(state);
+        if(isLocalPlayer)
+        {
+            GameController.Instance.ChangeState(state);
+        }    
     }
 
     [ClientCallback]
@@ -100,10 +103,10 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void StartGame()
     {
-        _starGameEventSO.Raise();
         gameObject.layer = _normalLayer;
         if (isLocalPlayer)
         {
+            _starGameEventSO.Raise();
             _camera.UpdateViewLayer(_normaViewlLayer);
         }
     }
@@ -195,7 +198,10 @@ public class Player : NetworkBehaviour
     private IEnumerator CoPlayVoteResult(string playerName)
     {
         yield return GameController.Instance.EndVote(playerName);
-        CheckNextRound();
+        if(IsHost)
+        {
+            CheckNextRound();
+        }    
     }    
 
     public void EndGame()
@@ -209,10 +215,7 @@ public class Player : NetworkBehaviour
     [Command]
     public void CheckNextRound()
     {
-        if(IsHost)
-        {
-            Match.CheckNextRound();
-        }    
+        Match.CheckNextRound();
     }    
 }
 
