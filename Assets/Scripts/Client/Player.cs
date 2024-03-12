@@ -1,5 +1,6 @@
 using Mirror;
 using Mirror.Examples.MultipleMatch;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -188,9 +189,14 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void RpcEndVote(string playerName)
     {
-        GameController.Instance.EndVote(playerName);
-        _role.Show();
+        StartCoroutine(CoPlayVoteResult(playerName));
     }
+
+    private IEnumerator CoPlayVoteResult(string playerName)
+    {
+        yield return GameController.Instance.EndVote(playerName);
+        CheckNextRound();
+    }    
 
     public void EndGame()
     {
@@ -199,6 +205,15 @@ public class Player : NetworkBehaviour
             GameController.Instance.EndGame();
         }
     }
+
+    [Command]
+    public void CheckNextRound()
+    {
+        if(IsHost)
+        {
+            Match.CheckNextRound();
+        }    
+    }    
 }
 
 public enum PlayerState

@@ -1,4 +1,5 @@
 using Mirror;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -61,9 +62,9 @@ public class GameController : SingletonBehavior<GameController>
         _uiMeeting.UpdateVote(playerIdVoted, playerIdTarget);
     }
 
-    public void EndVote(string playerName)
+    public IEnumerator EndVote(string playerName)
     {
-        _uiMeeting.EndVote(playerName);
+        yield return _uiMeeting.EndVote(playerName);
     }
 
     public void EndGame()

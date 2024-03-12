@@ -213,7 +213,7 @@ public class Match : NetworkBehaviour
             //End vote
             var deadId = CalculatorDeadPlayerAfterVoted();
 
-            if(!string.IsNullOrEmpty(deadId))
+            if (!string.IsNullOrEmpty(deadId))
             {
                 var dead = _player.Where(x => x.Value.PlayerInfo.ID == deadId).Single();
                 dead.Value.State = PlayerState.DEAD;
@@ -224,39 +224,19 @@ public class Match : NetworkBehaviour
                 _player[conn].RpcEndVote(null);
             }
 
-            //Start new round or end
-            //Ex new round
+            //Remove dead object
             foreach (var item in _deadObjects)
             {
                 NetworkServer.Destroy(item);
             }
             _deadObjects.Clear();
-
-            //new Round
-            //foreach (var player in  _player)
-            //{
-            //    player.Value.GameState = GameState.PLAYING;
-            //    player.Value.MoveToPosition(_map.GetStartPosition());
-            //}
-
-            if(_player.Values.Count(x => x.State == PlayerState.LIVE) == 1)
-            {
-                //End Game
-                foreach (var item in _player.Values)
-                {
-                    item.GameState = GameState.WAITING;
-                    item.State = PlayerState.LIVE;
-                    item.MoveToPosition(Vector3.zero);
-                    item.EndGame();
-                }
-            }    
-        }   
+        }
     }
 
     private string CalculatorDeadPlayerAfterVoted()
     {
-        var resultList = _votes.ToList();
-        resultList.Sort((x, y) => x.Value.CompareTo(y.Value));
+        var resultList = _votes.OrderByDescending(x => x.Value).ToList();
+
         if (resultList.Count > 2)
         {
             if (resultList[0].Value == resultList[1].Value)
@@ -265,13 +245,41 @@ public class Match : NetworkBehaviour
             }
 
             return resultList[0].Key;
-        }    
-        else if(resultList.Count == 1)
+        }
+        else if (resultList.Count == 1)
         {
             return resultList[0].Key;
-        }    
+        }
 
         return null;
+    }
+
+    public void CheckNextRound()
+    {
+        if (IsEndGame())
+        {
+            foreach (var item in _player.Values)
+            {
+                item.GameState = GameState.WAITING;
+                item.State = PlayerState.LIVE;
+                item.MoveToPosition(Vector3.zero);
+                item.EndGame();
+            }
+        }
+        else
+        {
+            //new Round
+            foreach (var player in _player.Values)
+            {
+                player.GameState = GameState.PLAYING;
+                player.MoveToPosition(_map.GetStartPosition());
+            }
+        }
+    }
+
+    private bool IsEndGame()
+    {
+        return _player.Values.Count(x => x.State == PlayerState.LIVE) == 1;
     }
     #endregion
 }

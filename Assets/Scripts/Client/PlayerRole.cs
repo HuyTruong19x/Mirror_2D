@@ -51,7 +51,6 @@ public class PlayerRole : NetworkBehaviour
     private void Report()
     {
         CmdReport();
-        _currentView.Hide();
     }
 
     [Command]

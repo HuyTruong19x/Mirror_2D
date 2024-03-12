@@ -12,10 +12,6 @@ public class UIMeeting : MonoBehaviour
     [SerializeField]
     private GameObject _endVotingObject;
     [SerializeField]
-    private Transform _playerParent;
-    [SerializeField]
-    private UIMeetingPlayer _player;
-    [SerializeField]
     private Button _skipButton;
     [SerializeField]
     private Text _voteResult;
@@ -48,6 +44,7 @@ public class UIMeeting : MonoBehaviour
 
         _uiMeetingPlayer.Clear();
         _skipVotes.Clear();
+        _skipButton.interactable = true;
 
         for (int i = 1; i < _skipVoteParent.childCount; i++)
         {
@@ -68,18 +65,9 @@ public class UIMeeting : MonoBehaviour
         _votingObject.SetActive(true);
         _endVotingObject.SetActive(false);
 
-        if (Player.Local.PlayerInfo.ID == deadPlayer.PlayerInfo.ID)
+        if (Player.Local.State == PlayerState.DEAD)
         {
             LockVote();
-        }
-    }
-
-    public void Hide()
-    {
-        _container.SetActive(false);
-        for (int i = 1; i < _playerParent.childCount; i++)
-        {
-            Destroy(_playerParent.GetChild(i).gameObject);
         }
     }
 
@@ -120,10 +108,10 @@ public class UIMeeting : MonoBehaviour
         _skipButton.interactable = false;
     }
 
-    public void EndVote(string playerName)
+    public IEnumerator EndVote(string playerName)
     {
         _voteResult.text = string.IsNullOrEmpty(playerName) ? "Everyone now still live!" : playerName + " is going to the hell";
-        StartCoroutine(ShowResult());
+        yield return ShowResult();
     }
 
     private IEnumerator ShowResult()
@@ -156,6 +144,6 @@ public class UIMeeting : MonoBehaviour
         _votingObject.SetActive(false);
         yield return new WaitForSeconds(3);
         _container.SetActive(false);
-
+        //TODO show loading scene
     }
 }
