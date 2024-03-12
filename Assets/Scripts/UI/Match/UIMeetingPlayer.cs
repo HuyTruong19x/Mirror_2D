@@ -81,10 +81,12 @@ public class UIMeetingPlayer : MonoBehaviour
         _votes.Add(Instantiate(_voteCount, _voteCountParent));
     }    
 
-    public IEnumerable ShowVoteCount(float delay)
+    public IEnumerator ShowVoteCount(float delay)
     {
+        Debug.Log(gameObject.name + " has " + _votes.Count);
         for (int i = 0; i < _votes.Count; i++)
         {
+            Debug.Log(gameObject.name + " Show vote at index " + i);
             _votes[i].SetActive(true);
             yield return new WaitForSeconds(delay);
         }

@@ -130,13 +130,22 @@ public class UIMeeting : MonoBehaviour
     {
         yield return new WaitForSeconds(2);
 
-        foreach (var item in _uiMeetingPlayer)
+        foreach (var item in _uiMeetingPlayer.Values)
         {
-            yield return item.Value.ShowVoteCount(_delayShowVoteCount);
+            item.SetVoted(false);
+        }
+
+        yield return new WaitForSeconds(2);
+
+        foreach (var item in _uiMeetingPlayer.Values)
+        {
+            Debug.Log("Show vote count");
+            yield return item.ShowVoteCount(_delayShowVoteCount);
         }
 
         foreach (var item in _skipVotes)
         {
+            Debug.Log("Show skip voted");
             yield return new WaitForSeconds(_delayShowVoteCount);
             item.gameObject.SetActive(true);
         }
@@ -147,5 +156,6 @@ public class UIMeeting : MonoBehaviour
         _votingObject.SetActive(false);
         yield return new WaitForSeconds(3);
         _container.SetActive(false);
+
     }
 }

@@ -80,6 +80,7 @@ public class Player : NetworkBehaviour
         if (nextState == PlayerState.DEAD)
         {
             gameObject.layer = _deadLayer;
+            GetComponent<SpriteRenderer>().color = Color.red;
             Dead();
         }
         else
@@ -137,7 +138,6 @@ public class Player : NetworkBehaviour
         {
             _camera.UpdateViewLayer(_ghostViewLayer);
             _role.Dead();
-            GetComponent<SpriteRenderer>().color = Color.red;
             GameController.Instance.Dead();
         }
     }
