@@ -104,8 +104,9 @@ public class Player : NetworkBehaviour
     [ClientCallback]
     private void OnPlayerInfoChanged(PlayerInfo _, PlayerInfo playerInfo)
     {
-        gameObject.name = playerInfo.Name;
+        gameObject.name = isLocalPlayer ? "Local_" + playerInfo.Name : playerInfo.Name;
         _txtPlayerName.text = playerInfo.Name;
+        _txtPlayerName.gameObject.transform.parent.gameObject.SetActive(!isServer);
     }
 
     [TargetRpc]
@@ -169,6 +170,7 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     public void Meeting(string raisePlayerId, List<Player> players, Player player)
     {
+        GameState = GameState.TALKING;
         GameController.Instance.Meeting(raisePlayerId, players, player);
     }
 
@@ -180,7 +182,6 @@ public class Player : NetworkBehaviour
     [Command]
     private void CmdVote(string playerIdVoted, string playerIDTarget)
     {
-        GameState = GameState.TALKING;
         Match.Vote(connectionToClient, playerIDTarget);
         RpcVote(playerIdVoted, playerIDTarget);
     }

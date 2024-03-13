@@ -32,8 +32,8 @@ public class Map : MonoBehaviour
         _roleDatabase.Initialized();
         _roles.Clear();
 
-        int wolfCount = 1;
-        int foxCount = 1;
+        int wolfCount;
+        int foxCount;
         if(totalPlayer <= 2)
         {
             wolfCount = 1;
@@ -54,6 +54,8 @@ public class Map : MonoBehaviour
             wolfCount = 3;
             foxCount = 3;
         }
+
+        Debug.Log($"Total player {totalPlayer} - total enemy {wolfCount} - total thirdparty {foxCount}");
 
         for (int i = 0; i < wolfCount; i++)
         {

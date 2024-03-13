@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Fox
   m_EditorClassIdentifier: 
   ID: 1
+  Type: 2
   Avatar: {fileID: 0}
   SpaceIcon: {fileID: 0}
   SpecialIcon: {fileID: 0}

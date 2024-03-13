@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Wolf
   m_EditorClassIdentifier: 
   ID: 2
+  Type: 1
   Avatar: {fileID: 0}
   SpaceIcon: {fileID: 0}
   SpecialIcon: {fileID: 0}

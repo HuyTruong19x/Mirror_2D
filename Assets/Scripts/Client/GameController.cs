@@ -10,12 +10,12 @@ public class GameController : SingletonBehavior<GameController>
     private GameState _currentState;
 
     [SerializeField]
-    private UIGame _uiGame;
-    [SerializeField]
     private GameObject _waitingMap;
     [SerializeField]
     private GameObject _gameMap;
     private bool _isHost;
+
+    [Header("UI")]
     [SerializeField]
     private UIDead _uiDead;
     [SerializeField]
@@ -24,6 +24,8 @@ public class GameController : SingletonBehavior<GameController>
     private UIEndGame _uiEndGame;
     [SerializeField]
     private UIFakeStartGame _uiFakeStartGame;
+    [SerializeField]
+    private UIWaiting _uiWaiting;
 
     void Start()
     {
@@ -38,7 +40,7 @@ public class GameController : SingletonBehavior<GameController>
 
     private void OnStateChange()
     {
-        _uiGame.ShowStartButton(_currentState == GameState.WAITING && _isHost);
+        _uiWaiting.ShowStartButton(_currentState == GameState.WAITING && _isHost);
         _waitingMap.SetActive(_currentState == GameState.WAITING);
         _gameMap.SetActive(_currentState != GameState.WAITING);
     }
@@ -46,7 +48,7 @@ public class GameController : SingletonBehavior<GameController>
     public void ChangeHost(bool isHost)
     {
         _isHost = isHost;
-        _uiGame.ShowStartButton(isHost && _currentState == GameState.WAITING);
+        _uiWaiting.ShowStartButton(isHost && _currentState == GameState.WAITING);
     }
 
     public void Dead()
@@ -76,6 +78,7 @@ public class GameController : SingletonBehavior<GameController>
 
     public void StartGame(Player ownPlayer, List<Player> players)
     {
+        _uiWaiting.Hide();
         _uiFakeStartGame.Show(ownPlayer, players);
     }
 }

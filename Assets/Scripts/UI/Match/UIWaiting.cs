@@ -26,8 +26,6 @@ public class UIWaiting : MonoBehaviour
     [Header("Event SO")]
     [SerializeField]
     private StringChannelEventSO _onStatusChanged;
-    [SerializeField]
-    private VoidChannelEventSO _startGameEventSO;
 
     private void OnEnable()
     {
@@ -36,17 +34,14 @@ public class UIWaiting : MonoBehaviour
         SetGameMode(_matchInfo.Info.Mode);
 
         _onStatusChanged.AddListener(ChangeStatus);
-
-        _startGameEventSO.AddListener(Hide);
     }
 
     private void OnDisable()
     {
         _onStatusChanged.RemoveListener(ChangeStatus);
-        _startGameEventSO.RemoveListener(Hide);
     }
 
-    private void Hide()
+    public void Hide()
     {
         _container.SetActive(false);
     }    

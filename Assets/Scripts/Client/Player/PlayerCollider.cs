@@ -40,6 +40,7 @@ public class PlayerCollider : NetworkBehaviour
                 if (min > Vector2.Distance(transform.position, colliders[i].transform.position)
                     && colliders[i].gameObject != gameObject)
                 {
+                    min = Vector2.Distance(transform.position, colliders[i].transform.position);
                     _nearestPlayer = colliders[i].GetComponent<Player>();
                 }
             }
