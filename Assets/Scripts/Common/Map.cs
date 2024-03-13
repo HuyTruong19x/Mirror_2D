@@ -10,7 +10,7 @@ public class Map : MonoBehaviour
     private List<Transform> _startPositions = new();
     [SerializeField]
     private RoleDatabase _roleDatabase;
-    private readonly Queue<RoleDataSO> _roles = new();
+    private Queue<RoleDataSO> _roles = new();
 
     [SerializeField]
     private bool _isUniqueRole = false;
@@ -31,6 +31,7 @@ public class Map : MonoBehaviour
     {
         _roleDatabase.Initialized();
         _roles.Clear();
+        List<RoleDataSO> randomList = new List<RoleDataSO>();
 
         int wolfCount;
         int foxCount;
@@ -59,18 +60,21 @@ public class Map : MonoBehaviour
 
         for (int i = 0; i < wolfCount; i++)
         {
-            _roles.Enqueue(_roleDatabase.Get(RoleType.ENEMY, _isUniqueRole));
+            randomList.Add(_roleDatabase.Get(RoleType.ENEMY, _isUniqueRole));
         }
 
         for (int i = 0; i < foxCount; i++)
         {
-            _roles.Enqueue(_roleDatabase.Get(RoleType.THIRD_PARTY, _isUniqueRole));
+            randomList.Add(_roleDatabase.Get(RoleType.THIRD_PARTY, _isUniqueRole));
         }
 
         int playerCount = totalPlayer - wolfCount - foxCount;
         for (int i = 0; i < playerCount; i++)
         {
-            _roles.Enqueue(_roleDatabase.Get(RoleType.NONE, _isUniqueRole));
+            randomList.Add(_roleDatabase.Get(RoleType.NONE, _isUniqueRole));
         }
+
+        randomList.Shuffer();
+        _roles = new Queue<RoleDataSO>(randomList);
     }
 }
