@@ -130,8 +130,7 @@ public class Match : NetworkBehaviour
             player.GameState = GameState.PLAYING;
             player.State = PlayerState.LIVE;
             var role = _map.GetRandomRole();
-            player.RoleId = role.ID;
-            player.RoleType = role.Type;
+            player.SetRole(role.Type, role.ID);
             player.StartGame(Players);
             player.MoveToPosition(_map.GetStartPosition());
         }

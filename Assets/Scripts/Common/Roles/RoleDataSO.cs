@@ -6,6 +6,7 @@ using UnityEngine;
 public class RoleDataSO : ScriptableObject
 {
     public int ID;
+    public string Name;
     public RoleType Type;
     public Sprite Avatar;
     public Sprite SpaceIcon;

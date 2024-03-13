@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: Dog
   m_EditorClassIdentifier: 
   ID: 0
+  Name: Dog
+  Type: 0
   Avatar: {fileID: 0}
   SpaceIcon: {fileID: 0}
   SpecialIcon: {fileID: 0}
+  Action: {fileID: 0}

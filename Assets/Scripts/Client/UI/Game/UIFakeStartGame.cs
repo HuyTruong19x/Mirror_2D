@@ -26,7 +26,8 @@ public class UIFakeStartGame : MonoBehaviour
 
     private void SetupUI(Player localPlayer, List<Player> players)
     {
-        _roleName.text = localPlayer.RoleType.ToString();
+        _roleName.text = localPlayer.Role.Name;
+        _roleName.color = localPlayer.Role.Type == RoleType.NONE ? Color.green : Color.red;
     }    
     
     private IEnumerator DelayToDisappear(float time)

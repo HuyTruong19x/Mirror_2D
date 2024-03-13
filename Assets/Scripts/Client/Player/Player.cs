@@ -17,8 +17,11 @@ public class Player : NetworkBehaviour
     [SyncVar(hook = nameof(OnHostChanged))] public bool IsHost = false;
     [SyncVar(hook = nameof(OnGameStateChanged))] public GameState GameState;
     [SyncVar(hook = nameof(OnPlayerStateChanged))] public PlayerState State = PlayerState.LIVE;
-    [SyncVar] public int RoleId;
-    public RoleType RoleType;
+
+    [SerializeField]
+    private RoleDatabase _roleDatabase;
+    private RoleDataSO _role;
+    public RoleDataSO Role => _role;
 
     [SerializeField]
     private Text _txtPlayerName;
@@ -29,7 +32,7 @@ public class Player : NetworkBehaviour
 
     [Header("Player Component")]
     [SerializeField]
-    private PlayerRole _role;
+    private PlayerUI _ui;
     [SerializeField]
     private PlayerCamera _camera;
 
@@ -87,6 +90,8 @@ public class Player : NetworkBehaviour
     [ClientCallback]
     private void OnPlayerStateChanged(PlayerState _, PlayerState nextState)
     {
+        _txtPlayerName.gameObject.SetActive(nextState != PlayerState.DEAD);
+
         if (nextState == PlayerState.DEAD)
         {
             gameObject.layer = _deadLayer;
@@ -106,7 +111,19 @@ public class Player : NetworkBehaviour
     {
         gameObject.name = isLocalPlayer ? "Local_" + playerInfo.Name : playerInfo.Name;
         _txtPlayerName.text = playerInfo.Name;
-        _txtPlayerName.gameObject.transform.parent.gameObject.SetActive(!isServer);
+    }
+
+    public void SetRole(RoleType roleType, int roleId)
+    {
+        _role = _roleDatabase.GetById(roleType, roleId);
+        RpcUpdateClientRole(roleType, roleId);
+    }
+
+    [TargetRpc]
+    public void RpcUpdateClientRole(RoleType roleType, int roleId)
+    {
+        _role = _roleDatabase.GetById(roleType, roleId);
+        _ui.UpdateUIByRoleId(_role);
     }
 
     [TargetRpc]
@@ -115,7 +132,7 @@ public class Player : NetworkBehaviour
         gameObject.layer = _normalLayer;
         if (isLocalPlayer)
         {
-            _role.UpdateRole(RoleId);
+            _ui.Show();
             GameController.Instance.StartGame(this, players);
             _camera.UpdateViewLayer(_normaViewlLayer);
         }
@@ -127,14 +144,12 @@ public class Player : NetworkBehaviour
         transform.position = pos;
     }
 
-
-    public void KillPlayer(Player player)
+    public void DoAction(Player player)
     {
-        CmdKill(player);
+        _role.Action.DoAction(this, player);
     }
 
-    [Command]
-    private void CmdKill(Player player)
+    public void KillPlayer(Player player)
     {
         Match.KillPlayer(player);
     }
@@ -145,7 +160,7 @@ public class Player : NetworkBehaviour
         if (isLocalPlayer)
         {
             _camera.UpdateViewLayer(_ghostViewLayer);
-            _role.Dead();
+            _ui.ShowDeadUI();
             GameController.Instance.Dead();
         }
     }
@@ -156,7 +171,6 @@ public class Player : NetworkBehaviour
         if (isLocalPlayer)
         {
             _camera.UpdateViewLayer(_normaViewlLayer);
-            _role.Hide();
         }
     }
 
