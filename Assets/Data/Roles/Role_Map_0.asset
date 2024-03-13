@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d5e94bfb56d0fb45879cd20f51954e7, type: 3}
+  m_Name: Role_Map_0
+  m_EditorClassIdentifier: 
+  Normal:
+  - {fileID: 11400000, guid: 41e6efdccf25e9949a6c06d8d638e851, type: 2}
+  Enemy:
+  - {fileID: 11400000, guid: b9e0372c85eea0d4aa042f2a49015014, type: 2}
+  ThirdParty:
+  - {fileID: 11400000, guid: 123456db7ca4754468829e38be74cf53, type: 2}

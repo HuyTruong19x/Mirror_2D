@@ -22,6 +22,8 @@ public class GameController : SingletonBehavior<GameController>
     private UIMeeting _uiMeeting;
     [SerializeField]
     private UIEndGame _uiEndGame;
+    [SerializeField]
+    private UIFakeStartGame _uiFakeStartGame;
 
     void Start()
     {
@@ -70,6 +72,11 @@ public class GameController : SingletonBehavior<GameController>
     public void EndGame()
     {
         _uiEndGame.Show();
+    }
+
+    public void StartGame(Player ownPlayer, List<Player> players)
+    {
+        _uiFakeStartGame.Show(ownPlayer, players);
     }
 }
 

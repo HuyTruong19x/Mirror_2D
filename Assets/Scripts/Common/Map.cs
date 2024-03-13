@@ -8,7 +8,12 @@ public class Map : MonoBehaviour
     public int MapID;
     [SerializeField]
     private List<Transform> _startPositions = new();
-    public readonly List<int> Roles = new();
+    [SerializeField]
+    private RoleDatabase _roleDatabase;
+    private readonly Queue<RoleDataSO> _roles = new();
+
+    [SerializeField]
+    private bool _isUniqueRole = false;
 
     public Vector3 GetStartPosition()
     {
@@ -16,27 +21,30 @@ public class Map : MonoBehaviour
     }
 
     [ServerCallback]
-    public int GetRandomRole()
+    public RoleDataSO GetRandomRole()
     {
-        var role = Roles[0];
-        Roles.RemoveAt(0);
-        return role;
+        return _roles.Dequeue();
     }
 
     [ServerCallback]
-    public void SetupRole(int TotalPlayer)
+    public void SetupRole(int totalPlayer)
     {
-        Roles.Clear();
+        _roleDatabase.Initialized();
+        _roles.Clear();
 
         int wolfCount = 1;
         int foxCount = 1;
-
-        if (TotalPlayer < 9)
+        if(totalPlayer <= 2)
+        {
+            wolfCount = 1;
+            foxCount = 0;
+        }
+        else if (totalPlayer < 9)
         {
             wolfCount = 1;
             foxCount = 1;
         }
-        else if (TotalPlayer < 12)
+        else if (totalPlayer < 12)
         {
             wolfCount = 2;
             foxCount = 2;
@@ -49,20 +57,18 @@ public class Map : MonoBehaviour
 
         for (int i = 0; i < wolfCount; i++)
         {
-            Roles.Add(2);
+            _roles.Enqueue(_roleDatabase.Get(RoleType.ENEMY, _isUniqueRole));
         }
 
         for (int i = 0; i < foxCount; i++)
         {
-            Roles.Add(1);
+            _roles.Enqueue(_roleDatabase.Get(RoleType.THIRD_PARTY, _isUniqueRole));
         }
 
-        int playerCount = TotalPlayer - wolfCount - foxCount;
+        int playerCount = totalPlayer - wolfCount - foxCount;
         for (int i = 0; i < playerCount; i++)
         {
-            Roles.Add(0);
+            _roles.Enqueue(_roleDatabase.Get(RoleType.NONE, _isUniqueRole));
         }
-
-        Roles.Shuffer();
     }
 }

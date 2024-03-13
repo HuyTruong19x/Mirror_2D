@@ -991,6 +991,7 @@ MonoBehaviour:
   MapID: 0
   _startPositions:
   - {fileID: 3967785622071114926}
+  _roleDatabase: {fileID: 11400000, guid: 966f12691aa6b7d4c99f824c5f6c626a, type: 2}
 --- !u!1 &6884377192983612549
 GameObject:
   m_ObjectHideFlags: 0

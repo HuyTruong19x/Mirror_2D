@@ -111,6 +111,7 @@ public class Match : NetworkBehaviour
             {
                 _player.ElementAt(0).Value.IsHost = isHost;
             }
+            //TODO check on game is playing
             UpdateMatchStatus();
         }
     }
@@ -123,14 +124,16 @@ public class Match : NetworkBehaviour
         _isPlaying = true;
         _map.SetupRole(_player.Count);
 
-        foreach (var player in _player)
+        foreach (var player in _player.Values)
         {
-            player.Value.Match = this;
-            player.Value.GameState = GameState.PLAYING;
-            player.Value.State = PlayerState.LIVE;
-            player.Value.SetRole(_map.GetRandomRole());
-            player.Value.StartGame();
-            player.Value.MoveToPosition(_map.GetStartPosition());
+            player.Match = this;
+            player.GameState = GameState.PLAYING;
+            player.State = PlayerState.LIVE;
+            var role = _map.GetRandomRole();
+            player.RoleId = role.ID;
+            player.RoleType = role.Type;
+            player.StartGame(Players);
+            player.MoveToPosition(_map.GetStartPosition());
         }
     }
 
@@ -260,7 +263,7 @@ public class Match : NetworkBehaviour
         {
             foreach (var item in _player.Values)
             {
-                item.GameState = GameState.WAITING;
+                item.GameState = GameState.ENDING;
                 item.State = PlayerState.LIVE;
                 item.MoveToPosition(Vector3.zero);
                 item.EndGame();

@@ -3,6 +3,7 @@ using Mirror.Examples.MultipleMatch;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 public class Player : NetworkBehaviour
@@ -16,6 +17,11 @@ public class Player : NetworkBehaviour
     [SyncVar(hook = nameof(OnHostChanged))] public bool IsHost = false;
     [SyncVar(hook = nameof(OnGameStateChanged))] public GameState GameState;
     [SyncVar(hook = nameof(OnPlayerStateChanged))] public PlayerState State = PlayerState.LIVE;
+    [SyncVar] public int RoleId;
+    public RoleType RoleType;
+
+    [SerializeField]
+    private Text _txtPlayerName;
 
     [Header("Event SO")]
     [SerializeField]
@@ -72,10 +78,10 @@ public class Player : NetworkBehaviour
     [ClientCallback]
     private void OnGameStateChanged(GameState _, GameState state)
     {
-        if(isLocalPlayer)
+        if (isLocalPlayer)
         {
             GameController.Instance.ChangeState(state);
-        }    
+        }
     }
 
     [ClientCallback]
@@ -90,6 +96,7 @@ public class Player : NetworkBehaviour
         else
         {
             gameObject.layer = _normalLayer;
+            GetComponent<SpriteRenderer>().color = Color.white;
             Live();
         }
     }
@@ -98,26 +105,22 @@ public class Player : NetworkBehaviour
     private void OnPlayerInfoChanged(PlayerInfo _, PlayerInfo playerInfo)
     {
         gameObject.name = playerInfo.Name;
+        _txtPlayerName.text = playerInfo.Name;
     }
 
-    [ClientRpc]
-    public void StartGame()
+    [TargetRpc]
+    public void StartGame(List<Player> players)
     {
         gameObject.layer = _normalLayer;
         if (isLocalPlayer)
         {
-            _starGameEventSO.Raise();
+            _role.UpdateRole(RoleId);
+            GameController.Instance.StartGame(this, players);
             _camera.UpdateViewLayer(_normaViewlLayer);
         }
     }
 
-    [ClientRpc]
-    public void SetRole(int roleId)
-    {
-        _role.UpdateRole(roleId);
-    }
-
-    [ClientRpc]
+    [TargetRpc]
     public void MoveToPosition(Vector3 pos)
     {
         transform.position = pos;
@@ -153,7 +156,6 @@ public class Player : NetworkBehaviour
         {
             _camera.UpdateViewLayer(_normaViewlLayer);
             _role.Hide();
-            GetComponent<SpriteRenderer>().color = Color.white;
         }
     }
 
@@ -198,11 +200,11 @@ public class Player : NetworkBehaviour
     private IEnumerator CoPlayVoteResult(string playerName)
     {
         yield return GameController.Instance.EndVote(playerName);
-        if(IsHost)
+        if (IsHost)
         {
             CheckNextRound();
-        }    
-    }    
+        }
+    }
 
     public void EndGame()
     {
@@ -216,7 +218,7 @@ public class Player : NetworkBehaviour
     public void CheckNextRound()
     {
         Match.CheckNextRound();
-    }    
+    }
 }
 
 public enum PlayerState
