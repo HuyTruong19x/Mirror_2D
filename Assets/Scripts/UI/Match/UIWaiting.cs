@@ -41,6 +41,11 @@ public class UIWaiting : MonoBehaviour
         _onStatusChanged.RemoveListener(ChangeStatus);
     }
 
+    public void Show()
+    {
+        _container.SetActive(true);
+    }    
+
     public void Hide()
     {
         _container.SetActive(false);

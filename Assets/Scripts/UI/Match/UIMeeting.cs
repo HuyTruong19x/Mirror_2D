@@ -116,7 +116,7 @@ public class UIMeeting : MonoBehaviour
 
     private IEnumerator ShowResult()
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
 
         foreach (var item in _uiMeetingPlayer.Values)
         {
@@ -138,7 +138,7 @@ public class UIMeeting : MonoBehaviour
             item.gameObject.SetActive(true);
         }
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
 
         _endVotingObject.SetActive(true);
         _votingObject.SetActive(false);

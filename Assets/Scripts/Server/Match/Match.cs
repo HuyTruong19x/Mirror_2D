@@ -179,6 +179,11 @@ public class Match : NetworkBehaviour
         NetworkServer.Spawn(go.gameObject);
         player.State = PlayerState.DEAD;
         _deadObjects.Add(go.gameObject);
+
+        if (IsEndGame())
+        {
+            EndGame();
+        }
     }
 
     [ServerCallback]
@@ -226,12 +231,7 @@ public class Match : NetworkBehaviour
                 _player[conn].RpcEndVote(null);
             }
 
-            //Remove dead object
-            foreach (var item in _deadObjects)
-            {
-                NetworkServer.Destroy(item);
-            }
-            _deadObjects.Clear();
+            RemoveDeadObject();
         }
     }
 
@@ -260,13 +260,7 @@ public class Match : NetworkBehaviour
     {
         if (IsEndGame())
         {
-            foreach (var item in _player.Values)
-            {
-                item.GameState = GameState.ENDING;
-                item.State = PlayerState.LIVE;
-                item.MoveToPosition(Vector3.zero);
-                item.EndGame();
-            }
+            EndGame();
         }
         else
         {
@@ -279,9 +273,60 @@ public class Match : NetworkBehaviour
         }
     }
 
+    private void EndGame()
+    {
+        foreach (var item in _player.Values)
+        {
+            item.GameState = GameState.ENDING;
+            item.EndGame();
+        }
+    }    
+
     private bool IsEndGame()
     {
-        return _player.Values.Count(x => x.State == PlayerState.LIVE) == 1;
+        var enemyCount = _player.Values.Count(x => x.State == PlayerState.LIVE && x.Role.Type == RoleType.ENEMY);
+        var thirdCount = _player.Values.Count(x => x.State == PlayerState.LIVE && x.Role.Type == RoleType.THIRD_PARTY);
+        var normalCount = _player.Values.Count(x => x.State == PlayerState.LIVE && x.Role.Type == RoleType.NONE);
+
+        if(enemyCount > normalCount && thirdCount == 0)
+        {
+            return true;
+        }
+
+        if(thirdCount > normalCount && enemyCount == 0)
+        {
+            return true;
+        }    
+
+        if(enemyCount == 0 && thirdCount == 0)
+        {
+            return true;
+        }    
+
+        return false;
     }
+
+    public void NewGame()
+    {
+        RemoveDeadObject();
+
+        foreach (var item in _player.Values)
+        {
+            item.GameState = GameState.WAITING;
+            item.State = PlayerState.LIVE;
+            item.MoveToPosition(Vector3.zero);
+            item.RpcNewGame();
+        }
+    }    
+
+    private void RemoveDeadObject()
+    {
+        //Remove dead object
+        foreach (var item in _deadObjects)
+        {
+            NetworkServer.Destroy(item);
+        }
+        _deadObjects.Clear();
+    }    
     #endregion
 }

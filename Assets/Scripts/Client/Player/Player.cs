@@ -221,12 +221,10 @@ public class Player : NetworkBehaviour
         }
     }
 
+    [TargetRpc]
     public void EndGame()
     {
-        if (isLocalPlayer)
-        {
-            GameController.Instance.EndGame();
-        }
+        GameController.Instance.EndGame();
     }
 
     [Command]
@@ -234,6 +232,26 @@ public class Player : NetworkBehaviour
     {
         Match.CheckNextRound();
     }
+
+    public void NewGame()
+    {
+        if(IsHost)
+        {
+            CmdNewGame();
+        }    
+    }
+
+    [Command]    
+    private void CmdNewGame()
+    {
+        Match.NewGame();
+    }
+
+    [ClientRpc]
+    public void RpcNewGame()
+    {
+        _ui.Hide();
+    }    
 }
 
 public enum PlayerState

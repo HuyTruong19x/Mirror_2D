@@ -73,6 +73,7 @@ public class GameController : SingletonBehavior<GameController>
 
     public void EndGame()
     {
+        _uiWaiting.Show();
         _uiEndGame.Show();
     }
 

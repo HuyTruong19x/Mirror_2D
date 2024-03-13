@@ -148,6 +148,17 @@ public class PlayerUI : NetworkBehaviour
 
     public void Show()
     {
-        _view.Show();
+        if (isLocalPlayer)
+        {
+            _view.Show();
+        }
+    }
+
+    public void Hide()
+    {
+        if (isLocalPlayer)
+        {
+            _view.Hide();
+        }
     }
 }

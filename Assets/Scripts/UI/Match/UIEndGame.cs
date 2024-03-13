@@ -16,6 +16,7 @@ public class UIEndGame : MonoBehaviour
     {
         _container.SetActive(true);
         Invoke(nameof(Hide), 2);
+        Player.Local.NewGame();
     }
 
     public void Hide()
