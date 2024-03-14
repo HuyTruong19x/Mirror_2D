@@ -1,4 +1,5 @@
 using Mirror;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerUI : NetworkBehaviour
@@ -23,6 +24,8 @@ public class PlayerUI : NetworkBehaviour
     private Player _nearestPlayer;
     private Player _deadPlayer;
 
+    private Quest _quest;
+
     public override void OnStartLocalPlayer()
     {
         InitializeView();
@@ -35,6 +38,7 @@ public class PlayerUI : NetworkBehaviour
             _view = Instantiate(_ui);
             _view.OnActionClick = Execute;
             _view.OnReportClick = Report;
+            _view.OnUseClick = Use;
             _view.Hide();
         }
     }
@@ -52,7 +56,8 @@ public class PlayerUI : NetworkBehaviour
             return;
         }
 
-        var colliders = Physics2D.OverlapCircleAll(transform.position, _physicRadius, _playerLayer);
+        var colliders = Physics2D.OverlapCircleAll(transform.position, _physicRadius, _playerLayer)
+            .Where(x => x.GetComponent<NetworkMatch>().matchId == _player.MatchID.ToGuid()).ToArray();
         if (colliders.Length > 0)
         {
             _canAction = false;
@@ -120,19 +125,19 @@ public class PlayerUI : NetworkBehaviour
         }
     }
 
-    private void OnCanActionChanged(bool _, bool canReport)
+    private void OnCanActionChanged(bool _, bool canAction)
     {
         if (isLocalPlayer)
         {
-            _view.SetActionInteract(canReport);
+            _view.SetActionInteract(canAction);
         }
     }
 
-    private void OnCanUseChanged(bool _, bool canReport)
+    private void OnCanUseChanged(bool _, bool canUse)
     {
         if (isLocalPlayer)
         {
-            _view.SetUseInteract(canReport);
+            _view.SetUseInteract(canUse);
         }
     }
 
@@ -161,4 +166,26 @@ public class PlayerUI : NetworkBehaviour
             _view.Hide();
         }
     }
+
+    public void SetQuestAction(Quest quest)
+    {
+        if (isLocalPlayer)
+        {
+            _quest = quest;
+            _canUse = quest != null;
+            _view?.SetUseInteract(_canUse);
+        }
+    }    
+
+    private void Use()
+    {
+        _quest?.Show();
+        if(_quest != null)
+        {
+            _quest.OnFinish = () =>
+            {
+                _player.FinishQuest(_quest.ID);
+            };
+        }    
+    }    
 }

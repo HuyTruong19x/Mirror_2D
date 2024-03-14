@@ -1,4 +1,5 @@
 using Mirror;
+using StinkySteak.MirrorBenchmark;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -26,6 +27,12 @@ public class GameController : SingletonBehavior<GameController>
     private UIFakeStartGame _uiFakeStartGame;
     [SerializeField]
     private UIWaiting _uiWaiting;
+    [SerializeField]
+    private UIGame _uiGame;
+
+    [Header("Map")]
+    [SerializeField]
+    private Map _map;
 
     void Start()
     {
@@ -58,6 +65,7 @@ public class GameController : SingletonBehavior<GameController>
 
     public void Meeting(string raisePlayerId, List<Player> players, Player player)
     {
+        _uiGame.Hide();
         _uiMeeting.Show(raisePlayerId, players, player);
     }
 
@@ -69,10 +77,12 @@ public class GameController : SingletonBehavior<GameController>
     public IEnumerator EndVote(string playerName)
     {
         yield return _uiMeeting.EndVote(playerName);
+        _uiGame.Show();
     }
 
     public void EndGame()
     {
+        _uiGame.Hide();
         _uiWaiting.Show();
         _uiEndGame.Show();
     }
@@ -81,7 +91,23 @@ public class GameController : SingletonBehavior<GameController>
     {
         _uiWaiting.Hide();
         _uiFakeStartGame.Show(ownPlayer, players);
+        _uiGame.Show();
     }
+
+    public void InitQuest(List<int> quest)
+    {
+        _map.InitQuest(quest);
+    }    
+
+    public void TotalQuest(int total)
+    {
+        _uiGame.InitQuest(total);
+    }
+
+    public void FinishQuest(int total)
+    {
+        _uiGame.FinishQuest(total);
+    }    
 }
 
 public enum GameState

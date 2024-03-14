@@ -13,6 +13,8 @@ public class UIPlayer : MonoBehaviour
 
     [SerializeField]
     private Button _useButton;
+    public Action OnUseClick;
+
     [SerializeField]
     private Button _reportButton;
     public Action OnReportClick;
@@ -44,7 +46,7 @@ public class UIPlayer : MonoBehaviour
 
     public void Use()
     {
-
+        OnUseClick?.Invoke();
     }
 
     public void UpdateUI(RoleDataSO roleData)

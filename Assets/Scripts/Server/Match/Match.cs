@@ -38,6 +38,11 @@ public class Match : NetworkBehaviour
 
     private Dictionary<string, int> _votes = new();
 
+    [SerializeField]
+    private int _questCount = 5;
+    private int _totalQuestCount = 0;
+    private int _finishQuestCount = 0;
+
     [ClientCallback]
     private void OnEnable()
     {
@@ -123,6 +128,8 @@ public class Match : NetworkBehaviour
         _votes.Clear();
         _isPlaying = true;
         _map.SetupRole(_player.Count);
+        _totalQuestCount = _questCount * _player.Count;
+        _finishQuestCount = 0;
 
         foreach (var player in _player.Values)
         {
@@ -131,6 +138,8 @@ public class Match : NetworkBehaviour
             player.State = PlayerState.LIVE;
             var role = _map.GetRandomRole();
             player.SetRole(role.Type, role.ID);
+            player.SetQuests(_map.GetRandomQuests(_questCount));
+            player.SetTotalQuest(_totalQuestCount);
             player.StartGame(Players);
             player.MoveToPosition(_map.GetStartPosition());
         }
@@ -327,6 +336,15 @@ public class Match : NetworkBehaviour
             NetworkServer.Destroy(item);
         }
         _deadObjects.Clear();
+    }    
+
+    public void FinishQuest(int id)
+    {
+        _finishQuestCount += 1;
+        if(_finishQuestCount >= _totalQuestCount)
+        {
+            EndGame();
+        }    
     }    
     #endregion
 }

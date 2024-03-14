@@ -13,7 +13,10 @@ public class DeadObject : NetworkBehaviour
         var role = collision.GetComponent<PlayerUI>();
         if (role != null)
         {
-            role.SetFoundDeadPlayer(_deadPlayer);
+            if(role.gameObject.GetComponent<NetworkMatch>().matchId == _deadPlayer.MatchID.ToGuid())
+            {
+                role.SetFoundDeadPlayer(_deadPlayer);
+            }    
         }
     }
 
@@ -23,7 +26,10 @@ public class DeadObject : NetworkBehaviour
         var role = collision.GetComponent<PlayerUI>();
         if (role != null)
         {
-            role.SetFoundDeadPlayer(null);
+            if (role.gameObject.GetComponent<NetworkMatch>().matchId == _deadPlayer.MatchID.ToGuid())
+            {
+                role.SetFoundDeadPlayer(null);
+            }
         }
     }
 

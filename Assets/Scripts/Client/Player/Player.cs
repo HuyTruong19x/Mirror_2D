@@ -48,6 +48,9 @@ public class Player : NetworkBehaviour
     private int _deadLayer;
     private int _normalLayer;
 
+    //Quest
+    private List<int> _quests = new List<int>();
+
     public override void OnStartLocalPlayer()
     {
         Local = this;
@@ -235,13 +238,13 @@ public class Player : NetworkBehaviour
 
     public void NewGame()
     {
-        if(IsHost)
+        if (IsHost)
         {
             CmdNewGame();
-        }    
+        }
     }
 
-    [Command]    
+    [Command]
     private void CmdNewGame()
     {
         Match.NewGame();
@@ -251,7 +254,51 @@ public class Player : NetworkBehaviour
     public void RpcNewGame()
     {
         _ui.Hide();
-    }    
+    }
+
+    public void SetQuests(List<int> quests)
+    {
+        _quests = quests;
+        RpcQuest(quests);
+    }
+
+    public void SetTotalQuest(int totalQuest)
+    {
+        RpcTotalQuest(totalQuest);
+    }
+
+    [TargetRpc]
+    private void RpcQuest(List<int> quests)
+    {
+        GameController.Instance.InitQuest(quests);
+    }
+
+    [TargetRpc]
+    private void RpcTotalQuest(int totalQuest)
+    {
+        GameController.Instance.TotalQuest(totalQuest);
+    }
+
+    public void FinishQuest(int id)
+    {
+        CmdFinishQuest(id);
+    }
+
+    [Command]
+    private void CmdFinishQuest(int id)
+    {
+        if (_quests.Contains(id))
+        {
+            Match.FinishQuest(id);
+            RpcFinishQuest(1);
+        }
+    }
+
+    [ClientRpc]
+    private void RpcFinishQuest(int count)
+    {
+        GameController.Instance.FinishQuest(count);
+    }
 }
 
 public enum PlayerState
