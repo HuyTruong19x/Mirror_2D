@@ -299,19 +299,23 @@ public class Match : NetworkBehaviour
 
         if(enemyCount > normalCount && thirdCount == 0)
         {
+            Debug.Log("End game due to enemy > normal");
             return true;
         }
 
         if(thirdCount > normalCount && enemyCount == 0)
         {
+            Debug.Log("End game due to third > normal");
             return true;
         }    
 
         if(enemyCount == 0 && thirdCount == 0)
         {
+            Debug.Log("End game due to normal win");
             return true;
-        }    
+        }
 
+        Debug.Log($"Normal = {normalCount} - Enemy = {enemyCount} - Third = {thirdCount}");
         return false;
     }
 

@@ -46,6 +46,11 @@ public class Quest : MonoBehaviour
         _container.SetActive(true);
     }    
 
+    public void Hide()
+    {
+        _container?.SetActive(false);
+    }    
+
     public void Finish()
     {
         OnFinish?.Invoke();

@@ -57,7 +57,8 @@ public class PlayerUI : NetworkBehaviour
         }
 
         var colliders = Physics2D.OverlapCircleAll(transform.position, _physicRadius, _playerLayer)
-            .Where(x => x.GetComponent<NetworkMatch>().matchId == _player.MatchID.ToGuid()).ToArray();
+            .Where(x => x.GetComponent<NetworkMatch>().matchId == _player.MatchID.ToGuid())
+            .Where(y => y.GetComponent<Player>().State != PlayerState.DEAD).ToArray();
         if (colliders.Length > 0)
         {
             _canAction = false;

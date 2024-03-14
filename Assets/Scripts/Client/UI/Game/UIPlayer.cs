@@ -68,6 +68,7 @@ public class UIPlayer : MonoBehaviour
 
     public void Hide()
     {
+        _reportButton.gameObject.SetActive(true);
         _container.SetActive(false);
     }
 }

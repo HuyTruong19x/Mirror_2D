@@ -103,6 +103,7 @@ public class Map : MonoBehaviour
             if (_questDict.ContainsKey(i))
             {
                 _questDict[i].gameObject.SetActive(true);
+                _questDict[i].Hide();
             }
         }
     }
